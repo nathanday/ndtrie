@@ -15,10 +15,12 @@ struct trieNode
 	NSUInteger			count,
 						size;
 	BOOL				terminalNode;      // is it the last character of a string, think of trie containing 'cat' and 'catalog'
-	struct trieNode		* children;
+	struct trieNode		** children;
 };
 
-static struct trieNode * findNode( struct trieNode *, NSString *, NSUInteger, BOOL);
+static struct trieNode * findNode( struct trieNode *, NSString *, NSUInteger, BOOL, struct trieNode **, NSUInteger *);
+static BOOL removeString( struct trieNode *, NSString *, NSUInteger, BOOL * );
+static NSUInteger removeChild( struct trieNode *, NSString * );
 static BOOL addString( struct trieNode *, NSString * );
 void forEveryStringFromNode( struct trieNode *, NSString *, BOOL(*)(NSString*,void*), void * );
 BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
@@ -139,13 +141,13 @@ BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 
 - (BOOL)containsString:(NSString *)aString
 {
-	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO );
+	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO, NULL, NULL );
 	return theNode != NULL && theNode->terminalNode;
 }
 
 - (BOOL)containsStringWithPrefix:(NSString *)aString
 {
-	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO );
+	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO, NULL, NULL );
 	return theNode != NULL;
 }
 
@@ -164,7 +166,7 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 - (NSArray *)everyStringWithPrefix:(NSString *)aPrefix
 {
 	NSMutableArray		* theResult = [NSMutableArray arrayWithCapacity:[self count]];
-	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO );
+	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
 	forEveryStringFromNode( theNode, aPrefix, _addToArrayFunc, theResult );
 	return theResult;
 }
@@ -186,7 +188,8 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *))aFunc
 {
-	forEveryStringFromNode( [self root], aPrefix, (BOOL(*)(NSString*,void*))aFunc, NULL );
+	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	forEveryStringFromNode( theNode, aPrefix, (BOOL(*)(NSString*,void*))aFunc, NULL );
 }
 
 - (void)enumerateStringsUsingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
@@ -196,7 +199,18 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
 {
-	forEveryStringFromNode( [self root], aPrefix, aFunc, aContext );
+	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	forEveryStringFromNode( theNode, aPrefix, aFunc, aContext );
+}
+
+- (BOOL)writeToFile:(NSString *)aPath atomically:(BOOL)anAtomically
+{
+	return [[self everyString] writeToFile:aPath atomically:anAtomically];
+}
+
+- (BOOL)writeToURL:(NSURL *)aURL atomically:(BOOL)anAtomically
+{
+	return [[self everyString] writeToURL:aURL atomically:anAtomically];
 }
 
 #ifdef NS_BLOCKS_AVAILABLE
@@ -214,7 +228,8 @@ BOOL enumerateFunc( NSString * aString, void * aContext )
 
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingBlock:(void (^)(NSString * string, BOOL *stop))aBlock
 {
-	forEveryStringFromNode( [self root], aPrefix, enumerateFunc, (void*)aBlock );
+	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	forEveryStringFromNode( theNode, aPrefix, enumerateFunc, (void*)aBlock );
 }
 
 struct testData
@@ -241,7 +256,8 @@ BOOL testFunc( NSString * aString, void * aContext )
 - (NSArray *)everyStringsWithPrefix:(NSString*)aPrefix passingTest:(void (^)(NSString * string, BOOL *stop))aPredicate
 {
 	struct testData		theData = { [NSMutableArray array], aPredicate };
-	forEveryStringFromNode( [self root], aPrefix, testFunc, (void*)&theData );
+	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	forEveryStringFromNode( theNode, aPrefix, testFunc, (void*)&theData );
 	return theData.array;;
 }
 
@@ -267,7 +283,7 @@ BOOL testFunc( NSString * aString, void * aContext )
 	NSString	* theString = aFirstString;
 
 	va_start( theArgList, aFirstString );
-	
+
 	do
 	{
 		count += addString( [self root], theString );
@@ -283,8 +299,15 @@ BOOL testFunc( NSString * aString, void * aContext )
 		count += addString( [self root], aStrings[i] );
 }
 
+static BOOL _addTrieFunc( NSString * aString, void * aContext )
+{
+	NDMutableTrie		* theTrie = (NDMutableTrie*)aContext;
+	[theTrie addString:aString];
+	return YES;
+}
 - (void)addTrie:(NDTrie *)aTrie
 {
+	[aTrie enumerateStringsUsingFunction:_addTrieFunc context:(void*)self];
 }
 
 - (void)addArray:(NSArray *)anArray
@@ -298,11 +321,28 @@ BOOL testFunc( NSString * aString, void * aContext )
 #endif
 }
 
-#if 0
-- (void)removeString:(NSString *)string;
-- (void)removeAllStrings;
-- (void)removeAllStringWithPrefix:(NSString *)prefix;
-#endif
+- (void)removeString:(NSString *)aString
+{
+	BOOL	theFoundNode = NO;
+	removeString( [self root], aString, 0, &theFoundNode );	
+	if( theFoundNode )
+		count--;
+}
+
+- (void)removeAllStrings
+{
+	count -= removeChild( [self root], NULL );
+}
+
+- (void)removeAllStringsWithPrefix:(NSString *)aPrefix
+{
+	NSUInteger			thePosition = 0;
+	struct trieNode		* theParent = nil,
+						* theNode = findNode( [self root], aPrefix, 0, NO, &theParent, &thePosition );
+
+	if( theNode != NULL && theParent != NULL )
+		count -= removeChild( [self root], aPrefix );
+}
 
 @end
 
@@ -313,12 +353,38 @@ BOOL testFunc( NSString * aString, void * aContext )
 }
 @end
 
-static void _initNode( struct trieNode * aNode, unichar aKey )
+static struct trieNode * _createNode( unichar aKey )
 {
-	aNode->key = aKey;
-	aNode->children = NULL;
-	aNode->terminalNode = NO;
-	aNode->count = 0;
+	struct trieNode		* theNode = malloc( sizeof(struct trieNode) );
+	theNode->key = aKey;
+	theNode->children = NULL;
+	theNode->terminalNode = NO;
+	theNode->count = 0;
+	return theNode;
+}
+
+static NSUInteger _deleteChildren( struct trieNode * aNode )
+{
+	NSUInteger	theCount = 0;
+
+	if( aNode->children )
+	{
+		for( NSUInteger i = 0; i < aNode->count; i++ )
+		{
+			theCount += _deleteChildren( aNode->children[i] );
+			free( aNode->children[i] );
+		}
+
+		free( aNode->children );
+		aNode->children = NULL;
+		aNode->count = 0;
+		aNode->size = 0;
+	}
+
+	if( aNode->terminalNode )
+		theCount++;
+
+	return theCount;
 }
 
 /*
@@ -336,15 +402,15 @@ inline static NSUInteger _indexForChild( struct trieNode * aNode, unichar aKey )
 		while( l < u-1 && theIndex == NSNotFound )
 		{
 			m = (u+l) >> 1;
-			if( aNode->children[m].key < aKey )
+			if( aNode->children[m]->key < aKey )
 				l = m;
-			else if( aNode->children[m].key > aKey )
+			else if( aNode->children[m]->key > aKey )
 				u = m;
 			else
 				theIndex = m;
 		}
 		if( theIndex == NSNotFound )
-			theIndex = aNode->children[l].key < aKey ? u : l;
+			theIndex = aNode->children[l]->key < aKey ? u : l;
 	}
 	else
 		theIndex = 0;
@@ -355,7 +421,7 @@ inline static NSUInteger _indexForChild( struct trieNode * aNode, unichar aKey )
 	Finds a node, if aCreate == YES nodes are created as needed but the final node is not set to terminal node
 	Should not return NULL if aCreate == YES
  */
-static struct trieNode * findNode( struct trieNode * aNode, NSString * aString, NSUInteger anIndex, BOOL aCreate )
+static struct trieNode * findNode( struct trieNode * aNode, NSString * aString, NSUInteger anIndex, BOOL aCreate, struct trieNode ** aParent, NSUInteger * anPosition )
 {
 	struct trieNode		* theNode = nil;
 	unichar				theCharacter = [aString characterAtIndex:anIndex];
@@ -363,43 +429,122 @@ static struct trieNode * findNode( struct trieNode * aNode, NSString * aString, 
 	if( aNode->children != NULL )
 	{
 		NSUInteger		theIndex = _indexForChild( aNode, theCharacter );
-		theNode = &aNode->children[theIndex];
-		if( theNode->key != theCharacter )
+		if( theIndex >= aNode->count || aNode->children[theIndex]->key != theCharacter )
 		{
 			if( aCreate )
 			{
 				if( aNode->count >= aNode->size )
 				{
-					aNode->size << 1;
+					aNode->size <<= 1;
 					aNode->children = realloc( aNode->children, aNode->size*sizeof(struct trieNode) );
 					NSCParameterAssert( aNode->children != NULL );
 				}
-				memmove( &aNode->children[theIndex+1], &aNode->children[theIndex], (aNode->count-theIndex)*sizeof(struct trieNode) );
-				_initNode( theNode, theCharacter );
+				memmove( &aNode->children[theIndex+1], &aNode->children[theIndex], (aNode->count-theIndex)*sizeof(struct trieNode*) );
+				aNode->children[theIndex] = _createNode( theCharacter );
+				theNode = aNode->children[theIndex];
 				aNode->count++;
+				if( anPosition )
+					*anPosition = theIndex;
+				if( aParent )
+					*aParent = aNode;
+				
 			}
-			else
-				return NULL;
+		}
+		else
+		{			
+			theNode = aNode->children[theIndex];
+			if( anPosition )
+				*anPosition = theIndex;
+			if( aParent )
+				*aParent = aNode;
 		}
 	}
 	else if( aCreate )
 	{
 		aNode->size = 4;
 		aNode->children = malloc( aNode->size*sizeof(struct trieNode) );
-		theNode = &aNode->children[0];
-		_initNode( theNode, theCharacter );
+		aNode->children[0] = _createNode( theCharacter );
+		theNode = aNode->children[0];
 		aNode->count++;
+		if( anPosition )
+			*anPosition = 0;
+		if( aParent )
+			*aParent = aNode;
+	}
+
+	anIndex++;
+	return [aString length] <= anIndex || theNode == NULL ? theNode : findNode( theNode, aString, anIndex, aCreate, aParent, anPosition );
+}
+
+BOOL removeString( struct trieNode * aNode, NSString * aString, NSUInteger anIndex, BOOL * aFoundNode )
+{
+	BOOL		theResult = NO;
+	if( aNode->children == NULL )
+	{
+		if( [aString length] == anIndex )
+		{
+			*aFoundNode = aNode->terminalNode;
+			theResult = YES;
+		}
+	}
+	else if( [aString length] > anIndex )
+	{
+		unichar			theKey = [aString characterAtIndex:anIndex];
+		NSUInteger		theIndex = _indexForChild( aNode, theKey );
+		if( theIndex < aNode->count )
+		{
+			if( aNode->children[theIndex]->key == theKey )
+			{
+				if( removeString( aNode->children[theIndex], aString, anIndex+1, aFoundNode ) )
+				{
+					aNode->count--;
+					free( aNode->children[theIndex] );
+					if( aNode->count > 0 )
+						memmove( &aNode->children[theIndex], &aNode->children[theIndex+1], (aNode->count-theIndex)*sizeof(struct trieNode*) );
+					else
+					{
+						free( aNode->children );
+						aNode->children = NULL;
+						theResult = YES;
+					}
+				}
+			}
+		}
+	}
+	return theResult;
+}
+
+NSUInteger removeChild( struct trieNode * aRoot, NSString * aPrefix )
+{
+	NSUInteger		theRemoveCount = 0;
+	if( aPrefix )
+	{
+		NSUInteger			thePosition = 0;
+		struct trieNode		* theParent = nil,
+							* theNode = findNode( aRoot, aPrefix, 0, NO, &theParent, &thePosition );
+
+		NSCParameterAssert( theParent != theNode );
+		
+		if( theNode != NULL && theParent != NULL )
+		{
+			theRemoveCount = _deleteChildren( theNode );
+			free( theNode );
+			memmove( &theParent->children[thePosition], &theParent->children[thePosition+1], (theParent->count-thePosition)*sizeof(struct trieNode*) );
+			theParent->count--;
+		}
 	}
 	else
-		return NULL;
-	anIndex++;
-	return [aString length] <= anIndex || theNode == NULL ? theNode : findNode( theNode, aString, anIndex, aCreate );
+	{
+		theRemoveCount = _deleteChildren( aRoot );
+	}
+	return theRemoveCount;
 }
 
 BOOL addString( struct trieNode * aNode, NSString * aString )
 {
 	BOOL				theNewString = NO;
-	struct trieNode		* theNode = findNode( aNode, aString, 0, YES );
+	NSString			* theString = [aString isKindOfClass:[NSString class]] ? aString : [aString description];
+	struct trieNode		* theNode = findNode( aNode, theString, 0, YES, NULL, NULL );
 	NSCParameterAssert( theNode != NULL );
 
 	theNewString = theNode->terminalNode == NO;
@@ -423,7 +568,7 @@ void forEveryStringFromNode( struct trieNode * aNode, NSString * aPrefix, BOOL(*
 		[aPrefix getCharacters:(void*)theBytes range:NSMakeRange(0,theLength)];
 
 	for( NSUInteger i = 0; i < aNode->count && theContinue; i++ )
-		theContinue = _recusiveForEveryString( &aNode->children[i], theLength, &theCapacity, &theBytes, aFunc, aContext );
+		theContinue = _recusiveForEveryString( aNode->children[i], theLength, &theCapacity, &theBytes, aFunc, aContext );
 	free( theBytes );
 }
 
@@ -443,7 +588,7 @@ BOOL _recusiveForEveryString( struct trieNode * aNode, NSUInteger aPos, NSUInteg
 		theContinue = aFunc( [NSString stringWithCharacters:*aBytes length:aPos+1], aContext );
 
 	for( NSUInteger i = 0; i < aNode->count && theContinue; i++ )
-		theContinue = _recusiveForEveryString( &aNode->children[i], aPos+1, aCapacity, aBytes, aFunc, aContext );
+		theContinue = _recusiveForEveryString( aNode->children[i], aPos+1, aCapacity, aBytes, aFunc, aContext );
 	return theContinue;
 }
 
@@ -453,7 +598,7 @@ BOOL nodesAreEqual( struct trieNode * aNodeA, struct trieNode * aNodeB )
 	if( aNodeA->count == aNodeB->count && aNodeA->key == aNodeB->key )
 	{
 		for( NSUInteger i = 0; i < aNodeA->count && theEqual; i++ )
-			theEqual = nodesAreEqual( &aNodeA->children[i], &aNodeB->children[i] );
+			theEqual = nodesAreEqual( aNodeA->children[i], aNodeB->children[i] );
 	}
 	else
 		theEqual = NO;

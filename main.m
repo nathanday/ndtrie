@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import "NDTrie.h"
 
+NSString		* kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/NDTrieTest/sample_file.plist";
+
 int main (int argc, const char * argv[])
 {
 	NSAutoreleasePool	* pool = [[NSAutoreleasePool alloc] init];
@@ -30,7 +32,7 @@ int main (int argc, const char * argv[])
 	
 	theTempArray = [theTrie everyStringWithPrefix:@"cat"];
 
-	NSCAssert( theTempArray.count == 2, @"every string with prefix cat contains %lu items, %@", theTempArray.count, theTempArray );
+	NSCAssert( theTempArray.count == 2, @"every string with prefix cat contains %lu items", theTempArray.count );
 
 	for( NSString * theString in [NSArray arrayWithObjects:@"caterpillar", @"catalog", nil] )
 		NSCAssert( [theTempArray containsObject:theString], @"every string did NOT contain %@", theString );
@@ -39,6 +41,67 @@ int main (int argc, const char * argv[])
 
 	NSCAssert( ![[NDTrie trieWithArray:theTestTrueStrings] isEqualToTrie:[NDTrie trieWithArray:theTestFalseStrings]], @"The two Trie are Equal" );
 
+	NDTrie		* theLargeTrie = [NDTrie trieWithContentsOfFile:kSampleFile];
+	NSCAssert( theLargeTrie.count == 182, @"large trie contains %lu items", theLargeTrie.count );
+	for( NSString * theString in [NSArray arrayWithContentsOfFile:kSampleFile] )
+		NSCAssert( [theLargeTrie containsString:theString], @"trie did NOT contain %@", theString );
+
+	/*
+		NDMutableTrie
+	 */
+	NDMutableTrie		* theMutableTrie = [NDMutableTrie trieWithArray:theTestTrueStrings];
+
+	[theMutableTrie addString:@"cataclysm"];
+	
+	NSCAssert( theMutableTrie.count == 8, @"The Trie had %lu strings", theMutableTrie.count );
+
+	for( NSString * theString in [theTestTrueStrings arrayByAddingObject:@"cataclysm"] )
+		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+
+	
+	[theMutableTrie addStrings:@"donut", @"doodle", nil];
+	NSCAssert( theMutableTrie.count == 10, @"The Trie had %lu strings", theMutableTrie.count );
+	
+	for( NSString * theString in [NSArray arrayWithObjects:@"donut", @"doodle", nil] )
+		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+	
+	NDTrie		* theAddTrie = [NDTrie trieWithStrings:@"fable", @"fabric", @"fibre", @"creak",nil];
+	[theMutableTrie addTrie:theAddTrie];
+	NSCAssert( theMutableTrie.count == 13, @"The Trie had %lu strings", theMutableTrie.count );
+
+	
+	NSArray		* theAddArray = [NSArray arrayWithObjects:@"catacomb",@"cabaret",@"docile",@"dog",nil];
+	[theMutableTrie addArray:theAddArray];
+
+	NSCAssert( theMutableTrie.count == 16, @"The Trie had %lu strings", theMutableTrie.count );
+
+	 for( NSString * theString in theAddArray )
+		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+
+	
+	[theMutableTrie removeString:@"dog"];
+	NSCAssert( theMutableTrie.count == 15, @"The Trie had %lu strings", theMutableTrie.count );
+	NSCAssert( ![theMutableTrie containsString:@"dog"], @"The Trie did contain dog" );
+
+	[theMutableTrie removeString:@"cata"];
+	NSCAssert( theMutableTrie.count == 15, @"The Trie had %lu strings", theMutableTrie.count );
+	for( NSString * theString in [NSArray arrayWithObjects:@"catalog", @"cataclysm", @"catacomb", nil] )
+		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+
+	[theMutableTrie removeAllStringsWithPrefix:@"cata"];
+	NSCAssert( theMutableTrie.count == 12, @"The Trie had %lu strings", theMutableTrie.count );
+	for( NSString * theString in [NSArray arrayWithObjects:@"catalog", @"cataclysm", @"catacomb", nil] )
+		NSCAssert( ![theMutableTrie containsString:theString], @"The Trie did contain %@", theString );
+
+	NSArray		* theRemaining = [theMutableTrie everyString];
+	NSCAssert( theRemaining.count == 12, @"The Trie had %lu strings", theRemaining.count );
+
+	[theMutableTrie removeAllStrings];
+	NSCAssert( theMutableTrie.count == 0, @"The Trie had %lu strings", theMutableTrie.count );
+	for( NSString * theString in theTestTrueStrings )
+		NSCAssert( ![theMutableTrie containsString:theString], @"The Trie did contain %@", theString );
+	
+	NSLog( @"\n%@", theMutableTrie );
 	[pool drain];
 	return 0;
 }
