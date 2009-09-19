@@ -9,6 +9,8 @@
 #import "NDTrie.h"
 #include <string.h>
 
+NSString		* const NDTrieIllegalObjectException = @"NDTrieIllegalObjectException";
+
 struct trieNode
 {
 	unichar				key;
@@ -25,6 +27,13 @@ static BOOL addString( struct trieNode *, NSString * );
 void forEveryStringFromNode( struct trieNode *, NSString *, BOOL(*)(NSString*,void*), void * );
 BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 
+static BOOL _addTrieFunc( NSString * aString, void * aContext )
+{
+	NDMutableTrie		* theTrie = (NDMutableTrie*)aContext;
+	[theTrie addString:aString];
+	return YES;
+}
+
 @interface NDTrie (Private)
 - (struct trieNode*)root;
 @end
@@ -39,6 +48,11 @@ BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 + (id)trieWithArray:(NSArray *)anArray
 {
 	return [[[self alloc] initWithArray:anArray] autorelease];
+}
+
++ (id)trieWithTrie:(NDTrie *)anAnotherTrie
+{
+	return [[[self alloc] initWithTrie:anAnotherTrie] autorelease];
 }
 
 + (id)trieWithStrings:(NSString *)aFirstString, ...
@@ -79,14 +93,31 @@ BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 	{
 #if __OBJC2__
 		for( NSString * theString in anArray )
+		{
+			if( ![theString isKindOfClass:[NSString class]] )
+				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
 			count += addString( [self root], theString );
+		}
 #else
 		for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
-			count += addString( [self root], [anArray objectAtIndex:0] );
+		{
+			NSString		* theString = [anArray objectAtIndex:i];
+			if( ![theString isKindOfClass:[NSString class]] )
+				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+			count += addString( [self root], theString );
+		}
 #endif
 	}
 	return self;
 }
+
+- (id)initWithTrie:(NDTrie *)anAnotherTrie
+{
+	if( (self = [self init]) != nil )
+		[anAnotherTrie enumerateStringsUsingFunction:_addTrieFunc context:(void*)self];
+	return self;
+}
+
 
 - (id)initWithStrings:(NSString *)aFirstString, ...
 {
@@ -126,6 +157,9 @@ BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 
 		do
 		{
+			if( ![theString isKindOfClass:[NSString class]] )
+				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+
 			count += addString( [self root], theString );
 		}
 		while( (theString = va_arg( anArguments, NSString * ) ) != nil );
@@ -235,25 +269,24 @@ BOOL enumerateFunc( NSString * aString, void * aContext )
 struct testData
 {
 	NSMutableArray * array;
-	void (^block)(NSString *, BOOL *);
+	BOOL (^block)(NSString *, BOOL *);
 };
 BOOL testFunc( NSString * aString, void * aContext )
 {
-	struct testData	* theData = (struct testData*)aContext;
-	BOOL					theTestResult = NO;
-	theData->block( aString, &theTestResult );
-	if( theTestResult )
+	struct testData		* theData = (struct testData*)aContext;
+	BOOL				theTestResult = NO;
+	if( theData->block( aString, &theTestResult ) )
 		[theData->array addObject:aString];
-	return YES;
+	return !theTestResult;
 }
-- (NSArray *)everyStringsPassingTest:(void (^)(NSString *, BOOL *))aPredicate
+- (NSArray *)everyStringPassingTest:(BOOL (^)(NSString *, BOOL *))aPredicate
 {
 	struct testData		theData = { [NSMutableArray array], aPredicate };
 	forEveryStringFromNode( [self root], NULL, testFunc, (void*)&theData );
 	return theData.array;;
 }
 
-- (NSArray *)everyStringsWithPrefix:(NSString*)aPrefix passingTest:(void (^)(NSString * string, BOOL *stop))aPredicate
+- (NSArray *)everyStringWithPrefix:(NSString*)aPrefix passingTest:(BOOL (^)(NSString * string, BOOL *stop))aPredicate
 {
 	struct testData		theData = { [NSMutableArray array], aPredicate };
 	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
@@ -266,6 +299,16 @@ BOOL testFunc( NSString * aString, void * aContext )
 - (NSString *)description
 {
 	return [[self everyString] description];
+}
+
+- (id)copyWithZone:(NSZone *)aZone
+{
+	return [self isMemberOfClass:[NDTrie class]] ? [self retain] : [[NDTrie allocWithZone:aZone] initWithTrie:self];
+}
+
+- (id)mutableCopyWithZone:(NSZone *)aZone
+{
+	return [[NDMutableTrie allocWithZone:aZone] initWithTrie:self];
 }
 
 @end
@@ -286,6 +329,9 @@ BOOL testFunc( NSString * aString, void * aContext )
 
 	do
 	{
+		if( ![theString isKindOfClass:[NSString class]] )
+			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+
 		count += addString( [self root], theString );
 	}
 	while( (theString = va_arg( theArgList, NSString * ) ) != nil );
@@ -299,12 +345,6 @@ BOOL testFunc( NSString * aString, void * aContext )
 		count += addString( [self root], aStrings[i] );
 }
 
-static BOOL _addTrieFunc( NSString * aString, void * aContext )
-{
-	NDMutableTrie		* theTrie = (NDMutableTrie*)aContext;
-	[theTrie addString:aString];
-	return YES;
-}
 - (void)addTrie:(NDTrie *)aTrie
 {
 	[aTrie enumerateStringsUsingFunction:_addTrieFunc context:(void*)self];
@@ -314,10 +354,19 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 {
 #if __OBJC2__
 	for( NSString * theString in anArray )
+	{
+		if( ![theString isKindOfClass:[NSString class]] )
+			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
 		count += addString( [self root], theString );
+	}
 #else
 	for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
-		count += addString( [self root], [anArray objectAtIndex:0] );
+	{
+		NSString	* theString = [anArray objectAtIndex:i];
+		if( ![theString isKindOfClass:[NSString class]] )
+			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+		count += addString( [self root], theString );
+	}
 #endif
 }
 
@@ -543,8 +592,7 @@ NSUInteger removeChild( struct trieNode * aRoot, NSString * aPrefix )
 BOOL addString( struct trieNode * aNode, NSString * aString )
 {
 	BOOL				theNewString = NO;
-	NSString			* theString = [aString isKindOfClass:[NSString class]] ? aString : [aString description];
-	struct trieNode		* theNode = findNode( aNode, theString, 0, YES, NULL, NULL );
+	struct trieNode		* theNode = findNode( aNode, aString, 0, YES, NULL, NULL );
 	NSCParameterAssert( theNode != NULL );
 
 	theNewString = theNode->terminalNode == NO;

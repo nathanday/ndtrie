@@ -50,54 +50,39 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 275046294;
-			PBXWorkspaceStateSaveDate = 275046294;
+			PBXPerProjectTemplateStateSaveDate = 275088907;
+			PBXWorkspaceStateSaveDate = 275088907;
 		};
 		perUserProjectItems = {
-			D853B905106418A5008C1AF0 = D853B905106418A5008C1AF0 /* PBXTextBookmark */;
-			D853B906106418A5008C1AF0 = D853B906106418A5008C1AF0 /* PBXTextBookmark */;
 			D8BC492D1063AC550077C830 = D8BC492D1063AC550077C830 /* PBXTextBookmark */;
 			D8BC49311063AC550077C830 = D8BC49311063AC550077C830 /* PBXTextBookmark */;
 			D8BC49BF1063C4C40077C830 = D8BC49BF1063C4C40077C830 /* PBXTextBookmark */;
-			D8BC4A191063D1DB0077C830 = D8BC4A191063D1DB0077C830 /* PBXTextBookmark */;
-			D8BC4B10106417010077C830 = D8BC4B10106417010077C830 /* PBXTextBookmark */;
-			D8BC4B11106417010077C830 = D8BC4B11106417010077C830 /* PBXTextBookmark */;
-			D8EBD3871065087700F13E41 /* PBXTextBookmark */ = D8EBD3871065087700F13E41 /* PBXTextBookmark */;
-			D8EBD3881065087700F13E41 /* PBXTextBookmark */ = D8EBD3881065087700F13E41 /* PBXTextBookmark */;
-			D8EBD3891065087700F13E41 /* PBXTextBookmark */ = D8EBD3891065087700F13E41 /* PBXTextBookmark */;
-			D8EBD38A1065087700F13E41 /* PBXTextBookmark */ = D8EBD38A1065087700F13E41 /* PBXTextBookmark */;
-			D8EBD38B1065087700F13E41 /* PBXTextBookmark */ = D8EBD38B1065087700F13E41 /* PBXTextBookmark */;
-			D8EBD3BC106516E400F13E41 /* PBXTextBookmark */ = D8EBD3BC106516E400F13E41 /* PBXTextBookmark */;
-			D8EBD3BD106516E400F13E41 /* PBXTextBookmark */ = D8EBD3BD106516E400F13E41 /* PBXTextBookmark */;
-			D8EBD3BE106516E400F13E41 /* PBXTextBookmark */ = D8EBD3BE106516E400F13E41 /* PBXTextBookmark */;
-			D8EBD3BF106516E400F13E41 /* PBXTextBookmark */ = D8EBD3BF106516E400F13E41 /* PBXTextBookmark */;
-			D8EBD3C0106516E400F13E41 /* PBXTextBookmark */ = D8EBD3C0106516E400F13E41 /* PBXTextBookmark */;
-			D8EBD3FC10653D8E00F13E41 /* PBXTextBookmark */ = D8EBD3FC10653D8E00F13E41 /* PBXTextBookmark */;
-			D8EBD3FD10653D8E00F13E41 /* PBXTextBookmark */ = D8EBD3FD10653D8E00F13E41 /* PBXTextBookmark */;
-			D8EBD3FE10653D8E00F13E41 /* PBXTextBookmark */ = D8EBD3FE10653D8E00F13E41 /* PBXTextBookmark */;
-			D8EBD3FF10653D8E00F13E41 /* PBXTextBookmark */ = D8EBD3FF10653D8E00F13E41 /* PBXTextBookmark */;
-			D8EBD40010653DBF00F13E41 /* PBXTextBookmark */ = D8EBD40010653DBF00F13E41 /* PBXTextBookmark */;
-			D8EBD40110653DD000F13E41 /* PBXTextBookmark */ = D8EBD40110653DD000F13E41 /* PBXTextBookmark */;
-			D8EBD40210653E1E00F13E41 /* PBXTextBookmark */ = D8EBD40210653E1E00F13E41 /* PBXTextBookmark */;
-			D8EBD40510653EB100F13E41 /* PBXTextBookmark */ = D8EBD40510653EB100F13E41 /* PBXTextBookmark */;
-			D8EBD40A10655F5900F13E41 /* PBXTextBookmark */ = D8EBD40A10655F5900F13E41 /* PBXTextBookmark */;
-			D8EBD40B10655FFE00F13E41 /* PBXTextBookmark */ = D8EBD40B10655FFE00F13E41 /* PBXTextBookmark */;
-			D8EBD410106560FA00F13E41 /* PBXTextBookmark */ = D8EBD410106560FA00F13E41 /* PBXTextBookmark */;
-			D8EBD411106560FA00F13E41 /* PBXTextBookmark */ = D8EBD411106560FA00F13E41 /* PBXTextBookmark */;
-			D8EBD412106560FA00F13E41 /* PBXTextBookmark */ = D8EBD412106560FA00F13E41 /* PBXTextBookmark */;
-			D8EBD415106562D700F13E41 /* PBXTextBookmark */ = D8EBD415106562D700F13E41 /* PBXTextBookmark */;
-			D8EBD417106562D700F13E41 /* PBXTextBookmark */ = D8EBD417106562D700F13E41 /* PBXTextBookmark */;
-			D8EBD418106562D700F13E41 /* PBXTextBookmark */ = D8EBD418106562D700F13E41 /* PBXTextBookmark */;
-			D8EBD419106562D700F13E41 /* PBXTextBookmark */ = D8EBD419106562D700F13E41 /* PBXTextBookmark */;
-			D8EBD41A106562D700F13E41 /* PBXTextBookmark */ = D8EBD41A106562D700F13E41 /* PBXTextBookmark */;
-			D8EBD41D1065630900F13E41 /* PBXTextBookmark */ = D8EBD41D1065630900F13E41 /* PBXTextBookmark */;
-			D8EBD41E106563B400F13E41 /* PBXTextBookmark */ = D8EBD41E106563B400F13E41 /* PBXTextBookmark */;
-			D8EBD441106567D800F13E41 /* PBXTextBookmark */ = D8EBD441106567D800F13E41 /* PBXTextBookmark */;
-			D8EBD442106567D800F13E41 /* PBXTextBookmark */ = D8EBD442106567D800F13E41 /* PBXTextBookmark */;
-			D8EBD443106567D800F13E41 /* PBXTextBookmark */ = D8EBD443106567D800F13E41 /* PBXTextBookmark */;
-			D8EBD444106567D800F13E41 /* PBXTextBookmark */ = D8EBD444106567D800F13E41 /* PBXTextBookmark */;
-			D8EBD4491065685E00F13E41 /* PBXTextBookmark */ = D8EBD4491065685E00F13E41 /* PBXTextBookmark */;
-			D8EBD44A106568D400F13E41 /* PBXTextBookmark */ = D8EBD44A106568D400F13E41 /* PBXTextBookmark */;
+			D8EBD3BC106516E400F13E41 = D8EBD3BC106516E400F13E41 /* PBXTextBookmark */;
+			D8EBD415106562D700F13E41 = D8EBD415106562D700F13E41 /* PBXTextBookmark */;
+			D8EBD4641065709700F13E41 = D8EBD4641065709700F13E41 /* PBXTextBookmark */;
+			D8EBD4651065709700F13E41 = D8EBD4651065709700F13E41 /* PBXTextBookmark */;
+			D8EBD4661065709700F13E41 = D8EBD4661065709700F13E41 /* PBXTextBookmark */;
+			D8EBD4671065709700F13E41 = D8EBD4671065709700F13E41 /* PBXTextBookmark */;
+			D8EBD476106586A200F13E41 /* PBXTextBookmark */ = D8EBD476106586A200F13E41 /* PBXTextBookmark */;
+			D8EBD477106586A200F13E41 /* PBXTextBookmark */ = D8EBD477106586A200F13E41 /* PBXTextBookmark */;
+			D8EBD478106586A200F13E41 /* PBXTextBookmark */ = D8EBD478106586A200F13E41 /* PBXTextBookmark */;
+			D8EBD47A106586A200F13E41 /* PBXTextBookmark */ = D8EBD47A106586A200F13E41 /* PBXTextBookmark */;
+			D8EBD47B106586A200F13E41 /* PBXTextBookmark */ = D8EBD47B106586A200F13E41 /* PBXTextBookmark */;
+			D8EBD47F106586B200F13E41 /* PBXTextBookmark */ = D8EBD47F106586B200F13E41 /* PBXTextBookmark */;
+			D8EBD480106586B200F13E41 /* PBXTextBookmark */ = D8EBD480106586B200F13E41 /* PBXTextBookmark */;
+			D8EBD481106586B200F13E41 /* PBXTextBookmark */ = D8EBD481106586B200F13E41 /* PBXTextBookmark */;
+			D8EBD482106586CD00F13E41 /* PBXTextBookmark */ = D8EBD482106586CD00F13E41 /* PBXTextBookmark */;
+			D8EBD483106586CD00F13E41 /* PBXTextBookmark */ = D8EBD483106586CD00F13E41 /* PBXTextBookmark */;
+			D8EBD4841065870200F13E41 /* PBXTextBookmark */ = D8EBD4841065870200F13E41 /* PBXTextBookmark */;
+			D8EBD4851065870200F13E41 /* PBXTextBookmark */ = D8EBD4851065870200F13E41 /* PBXTextBookmark */;
+			D8EBD48E10658A6C00F13E41 /* PBXTextBookmark */ = D8EBD48E10658A6C00F13E41 /* PBXTextBookmark */;
+			D8EBD48F10658A6C00F13E41 /* PBXTextBookmark */ = D8EBD48F10658A6C00F13E41 /* PBXTextBookmark */;
+			D8EBD49010658A6C00F13E41 /* XCBuildMessageTextBookmark */ = D8EBD49010658A6C00F13E41 /* XCBuildMessageTextBookmark */;
+			D8EBD49110658A6C00F13E41 /* PBXTextBookmark */ = D8EBD49110658A6C00F13E41 /* PBXTextBookmark */;
+			D8EBD4A310658AB600F13E41 /* PBXTextBookmark */ = D8EBD4A310658AB600F13E41 /* PBXTextBookmark */;
+			D8EBD4A410658AB600F13E41 /* PBXTextBookmark */ = D8EBD4A410658AB600F13E41 /* PBXTextBookmark */;
+			D8EBD4A510658AB600F13E41 /* XCBuildMessageTextBookmark */ = D8EBD4A510658AB600F13E41 /* XCBuildMessageTextBookmark */;
+			D8EBD4A610658AB600F13E41 /* PBXTextBookmark */ = D8EBD4A610658AB600F13E41 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D88B7A8110619CAD00B91A81 /* Source Control */;
 		userBookmarkGroup = D8EBD3411064DF9600F13E41 /* PBXBookmarkGroup */;
@@ -106,15 +91,15 @@
 	};
 	08FB7796FE84155DC02AAC07 /* main.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1063, 1566}}";
-			sepNavSelRange = "{2264, 0}";
-			sepNavVisRange = "{1290, 2192}";
+			sepNavIntBoundsRect = "{{0, 0}, {1063, 1718}}";
+			sepNavSelRange = "{2804, 0}";
+			sepNavVisRange = "{1381, 2254}";
 			sepNavWindowFrame = "{{561, 230}, {875, 491}}";
 		};
 	};
 	32A70AAB03705E1F00C91783 /* NDTrieTest_Prefix.pch */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1063, 603}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1063, 595}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 162}";
 		};
@@ -124,26 +109,6 @@
 		executables = (
 			D88B7A7B10619CA000B91A81 /* NDTrieTest */,
 		);
-	};
-	D853B905106418A5008C1AF0 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 60";
-		rLen = 0;
-		rLoc = 8610;
-		rType = 0;
-		vrLen = 1544;
-		vrLoc = 751;
-	};
-	D853B906106418A5008C1AF0 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 60";
-		rLen = 0;
-		rLoc = 8610;
-		rType = 0;
-		vrLen = 1544;
-		vrLoc = 751;
 	};
 	D88B7A7B10619CA000B91A81 /* NDTrieTest */ = {
 		isa = PBXExecutable;
@@ -193,17 +158,17 @@
 	};
 	D88B7A8710619CD500B91A81 /* NDTrie.h */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            l = description;\n            r = \"{1448, 15}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{2302, 14}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{2617, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{2645, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{2927, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{2952, 10}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{3228, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{3258, 15}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{3423, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{3452, 15}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{3582, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{3618, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{3646, 15}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{3797, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{3825, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{4106, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{4386, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{4416, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{4441, 10}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{4606, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{4641, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{4675, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{4700, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{4822, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{4848, 14}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{4872, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{4949, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{4975, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{5005, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{5030, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{5138, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{5164, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{5194, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{5219, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{5324, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{5350, 14}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{5374, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{5462, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{5488, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{5518, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{5543, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{5653, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{5679, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{5712, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{5737, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{5851, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{5877, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{5906, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{6059, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{6085, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6115, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6145, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{6323, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{6349, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6378, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6410, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{6600, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{6626, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6656, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6686, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6718, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{6912, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{6938, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6966, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7001, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{7178, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{7204, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7231, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7266, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{7468, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{7494, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7524, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{7690, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{7716, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7746, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7777, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{7959, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{7985, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8019, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{8044, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{8208, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{8234, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8264, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8299, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{8324, 10}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{8531, 12}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8557, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{8647, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{8673, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8703, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{8797, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{8823, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8859, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8887, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{8998, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{9024, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{9055, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{9085, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{9203, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{9229, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{9257, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{9343, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{9369, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{9398, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{9492, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{9518, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{9548, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{9650, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{9676, 14}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{9773, 12}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{9799, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{9829, 15}\";\n            s = 1;\n        }\n    );\n    r = \"{0, 9910}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1063, 4917}}";
-			sepNavSelRange = "{6589, 0}";
-			sepNavVisRange = "{4205, 719}";
+			sepNavFolds = "{\n    c =     (\n                {\n            l = discussion;\n            r = \"{6487, 14}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{6862, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{6890, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7197, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7493, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7523, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{7548, 10}\";\n            s = 1;\n        },\n                {\n            l = discussion;\n            r = \"{7759, 14}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7794, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{7828, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{7853, 10}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8502, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{8527, 10}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{8917, 15}\";\n            s = 1;\n        },\n                {\n            l = result;\n            r = \"{8942, 10}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{15550, 15}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{16316, 15}\";\n            s = 1;\n        },\n                {\n            l = abstract;\n            r = \"{20338, 12}\";\n            s = 1;\n        },\n                {\n            l = description;\n            r = \"{20939, 15}\";\n            s = 1;\n        }\n    );\n    r = \"{0, 21537}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1063, 5381}}";
+			sepNavSelRange = "{1677, 0}";
+			sepNavVisRange = "{679, 2040}";
 		};
 	};
 	D88B7A8810619CD500B91A81 /* NDTrie.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1063, 8574}}";
-			sepNavSelRange = "{2057, 0}";
-			sepNavVisRange = "{1680, 1026}";
+			sepNavIntBoundsRect = "{{0, 0}, {1063, 9426}}";
+			sepNavSelRange = "{3242, 0}";
+			sepNavVisRange = "{2565, 1255}";
 		};
 	};
 	D8BC492D1063AC550077C830 /* PBXTextBookmark */ = {
@@ -257,36 +222,6 @@
 		vrLen = 1319;
 		vrLoc = 2555;
 	};
-	D8BC4A191063D1DB0077C830 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 32A70AAB03705E1F00C91783 /* NDTrieTest_Prefix.pch */;
-		name = "NDTrieTest_Prefix.pch: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 162;
-		vrLoc = 0;
-	};
-	D8BC4B10106417010077C830 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 275";
-		rLen = 0;
-		rLoc = 7747;
-		rType = 0;
-		vrLen = 878;
-		vrLoc = 6515;
-	};
-	D8BC4B11106417010077C830 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 25";
-		rLen = 0;
-		rLoc = 1289;
-		rType = 0;
-		vrLen = 2031;
-		vrLoc = 54;
-	};
 	D8EBD3411064DF9600F13E41 /* PBXBookmarkGroup */ = {
 		isa = PBXBookmarkGroup;
 		children = (
@@ -299,60 +234,10 @@
 		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
 		name = "NDTrie.m: 423";
 		rLen = 0;
-		rLoc = 14302;
+		rLoc = 16210;
 		rType = 0;
 		vrLen = 1418;
 		vrLoc = 9886;
-	};
-	D8EBD3871065087700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 32A70AAB03705E1F00C91783 /* NDTrieTest_Prefix.pch */;
-		name = "NDTrieTest_Prefix.pch: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 162;
-		vrLoc = 0;
-	};
-	D8EBD3881065087700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 36";
-		rLen = 0;
-		rLoc = 1848;
-		rType = 0;
-		vrLen = 1934;
-		vrLoc = 1569;
-	};
-	D8EBD3891065087700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 66";
-		rLen = 9;
-		rLoc = 9426;
-		rType = 0;
-		vrLen = 1468;
-		vrLoc = 827;
-	};
-	D8EBD38A1065087700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 387";
-		rLen = 0;
-		rLoc = 11506;
-		rType = 0;
-		vrLen = 1683;
-		vrLoc = 10544;
-	};
-	D8EBD38B1065087700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 423";
-		rLen = 0;
-		rLoc = 13160;
-		rType = 0;
-		vrLen = 1042;
-		vrLoc = 10034;
 	};
 	D8EBD3BC106516E400F13E41 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -363,176 +248,6 @@
 		rType = 0;
 		vrLen = 162;
 		vrLoc = 0;
-	};
-	D8EBD3BD106516E400F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 87";
-		rLen = 0;
-		rLoc = 4453;
-		rType = 0;
-		vrLen = 2102;
-		vrLoc = 2305;
-	};
-	D8EBD3BE106516E400F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 70";
-		rLen = 0;
-		rLoc = 9904;
-		rType = 0;
-		vrLen = 1599;
-		vrLoc = 683;
-	};
-	D8EBD3BF106516E400F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 321";
-		rLen = 7;
-		rLoc = 8798;
-		rType = 0;
-		vrLen = 900;
-		vrLoc = 7231;
-	};
-	D8EBD3C0106516E400F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 319";
-		rLen = 0;
-		rLoc = 8748;
-		rType = 0;
-		vrLen = 855;
-		vrLoc = 7598;
-	};
-	D8EBD3FC10653D8E00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 532";
-		rLen = 0;
-		rLoc = 13886;
-		rType = 0;
-		vrLen = 1446;
-		vrLoc = 13026;
-	};
-	D8EBD3FD10653D8E00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 90";
-		rLen = 0;
-		rLoc = 4905;
-		rType = 0;
-		vrLen = 2188;
-		vrLoc = 2645;
-	};
-	D8EBD3FE10653D8E00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 70";
-		rLen = 0;
-		rLoc = 9904;
-		rType = 0;
-		vrLen = 1600;
-		vrLoc = 683;
-	};
-	D8EBD3FF10653D8E00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 15";
-		rLen = 0;
-		rLoc = 1484;
-		rType = 0;
-		vrLen = 1026;
-		vrLoc = 0;
-	};
-	D8EBD40010653DBF00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 25";
-		rLen = 0;
-		rLoc = 1325;
-		rType = 0;
-		vrLen = 1409;
-		vrLoc = 109;
-	};
-	D8EBD40110653DD000F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 40";
-		rLen = 0;
-		rLoc = 1498;
-		rType = 0;
-		vrLen = 1395;
-		vrLoc = 109;
-	};
-	D8EBD40210653E1E00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 37";
-		rLen = 4;
-		rLoc = 1403;
-		rType = 0;
-		vrLen = 1434;
-		vrLoc = 109;
-	};
-	D8EBD40510653EB100F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 30";
-		rLen = 8;
-		rLoc = 1293;
-		rType = 0;
-		vrLen = 1148;
-		vrLoc = 549;
-	};
-	D8EBD40A10655F5900F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 76";
-		rLen = 0;
-		rLoc = 2661;
-		rType = 0;
-		vrLen = 1162;
-		vrLoc = 1155;
-	};
-	D8EBD40B10655FFE00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 120";
-		rLen = 0;
-		rLoc = 3958;
-		rType = 0;
-		vrLen = 1246;
-		vrLoc = 3662;
-	};
-	D8EBD410106560FA00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 131";
-		rLen = 0;
-		rLoc = 4455;
-		rType = 0;
-		vrLen = 822;
-		vrLoc = 4792;
-	};
-	D8EBD411106560FA00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 532";
-		rLen = 0;
-		rLoc = 13886;
-		rType = 0;
-		vrLen = 1446;
-		vrLoc = 13026;
-	};
-	D8EBD412106560FA00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 536";
-		rLen = 74;
-		rLoc = 14005;
-		rType = 0;
-		vrLen = 1500;
-		vrLoc = 13180;
 	};
 	D8EBD415106562D700F13E41 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -546,128 +261,259 @@
 	};
 	D8EBD416106562D700F13E41 /* NSArray.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = NSArray.h;
 		path = /Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/NSArray.h;
 		sourceTree = "<absolute>";
 	};
-	D8EBD417106562D700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 213";
-		rLen = 0;
-		rLoc = 5629;
-		rType = 0;
-		vrLen = 1562;
-		vrLoc = 4766;
-	};
-	D8EBD418106562D700F13E41 /* PBXTextBookmark */ = {
+	D8EBD4641065709700F13E41 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 234";
-		rLen = 66;
-		rLoc = 7065;
-		rType = 0;
-		vrLen = 1238;
-		vrLoc = 6672;
-	};
-	D8EBD419106562D700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 90";
+		name = "NDTrie.h: 74";
 		rLen = 0;
-		rLoc = 4905;
+		rLoc = 3421;
 		rType = 0;
-		vrLen = 2104;
-		vrLoc = 2729;
+		vrLen = 1512;
+		vrLoc = 2445;
 	};
-	D8EBD41A106562D700F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 42";
-		rLen = 0;
-		rLoc = 2481;
-		rType = 0;
-		vrLen = 2107;
-		vrLoc = 1383;
-	};
-	D8EBD41D1065630900F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 42";
-		rLen = 0;
-		rLoc = 2481;
-		rType = 0;
-		vrLen = 2094;
-		vrLoc = 1440;
-	};
-	D8EBD41E106563B400F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 4";
-		rLen = 0;
-		rLoc = 155;
-		rType = 0;
-		vrLen = 1942;
-		vrLoc = 0;
-	};
-	D8EBD441106567D800F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
-		name = "NDTrie.h: 247";
-		rLen = 0;
-		rLoc = 7456;
-		rType = 0;
-		vrLen = 929;
-		vrLoc = 4456;
-	};
-	D8EBD442106567D800F13E41 /* PBXTextBookmark */ = {
+	D8EBD4651065709700F13E41 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
-		name = "NDTrie.m: 83";
+		name = "NDTrie.m: 378";
 		rLen = 0;
-		rLoc = 2057;
+		rLoc = 11157;
 		rType = 0;
-		vrLen = 1026;
-		vrLoc = 1680;
+		vrLen = 895;
+		vrLoc = 10405;
 	};
-	D8EBD443106567D800F13E41 /* PBXTextBookmark */ = {
+	D8EBD4661065709700F13E41 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 44";
+		name = "main.m: 37";
 		rLen = 0;
-		rLoc = 2142;
-		rType = 0;
-		vrLen = 2035;
-		vrLoc = 1542;
-	};
-	D8EBD444106567D800F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 54";
-		rLen = 0;
-		rLoc = 2634;
-		rType = 0;
-		vrLen = 2110;
-		vrLoc = 1329;
-	};
-	D8EBD4491065685E00F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 35";
-		rLen = 0;
-		rLoc = 1650;
-		rType = 0;
-		vrLen = 2220;
-		vrLoc = 1381;
-	};
-	D8EBD44A106568D400F13E41 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
-		name = "main.m: 45";
-		rLen = 0;
-		rLoc = 2264;
+		rLoc = 1694;
 		rType = 0;
 		vrLen = 2192;
 		vrLoc = 1290;
+	};
+	D8EBD4671065709700F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
+		name = "main.m: 13";
+		rLen = 41;
+		rLoc = 624;
+		rType = 0;
+		vrLen = 2229;
+		vrLoc = 157;
+	};
+	D8EBD476106586A200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
+		name = "main.m: 22";
+		rLen = 0;
+		rLoc = 1032;
+		rType = 0;
+		vrLen = 2325;
+		vrLoc = 156;
+	};
+	D8EBD477106586A200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
+		name = "NDTrie.h: 72";
+		rLen = 0;
+		rLoc = 3421;
+		rType = 0;
+		vrLen = 2285;
+		vrLoc = 1877;
+	};
+	D8EBD478106586A200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D8EBD479106586A200F13E41 /* NSObject.h */;
+		name = "NSObject.h: 29";
+		rLen = 37;
+		rLoc = 625;
+		rType = 0;
+		vrLen = 915;
+		vrLoc = 0;
+	};
+	D8EBD479106586A200F13E41 /* NSObject.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSObject.h;
+		path = /Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/NSObject.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1063, 2478}}";
+			sepNavSelRange = "{1455, 19}";
+			sepNavVisRange = "{1005, 824}";
+		};
+	};
+	D8EBD47A106586A200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 306";
+		rLen = 15;
+		rLoc = 8788;
+		rType = 0;
+		vrLen = 1062;
+		vrLoc = 8108;
+	};
+	D8EBD47B106586A200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 308";
+		rLen = 0;
+		rLoc = 8837;
+		rType = 0;
+		vrLen = 1057;
+		vrLoc = 8108;
+	};
+	D8EBD47F106586B200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
+		name = "NDTrie.h: 48";
+		rLen = 0;
+		rLoc = 2662;
+		rType = 0;
+		vrLen = 2024;
+		vrLoc = 678;
+	};
+	D8EBD480106586B200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 310";
+		rLen = 0;
+		rLoc = 9002;
+		rType = 0;
+		vrLen = 1057;
+		vrLoc = 8108;
+	};
+	D8EBD481106586B200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 310";
+		rLen = 0;
+		rLoc = 9002;
+		rType = 0;
+		vrLen = 1057;
+		vrLoc = 8108;
+	};
+	D8EBD482106586CD00F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 302";
+		rLen = 0;
+		rLoc = 8735;
+		rType = 0;
+		vrLen = 1057;
+		vrLoc = 8108;
+	};
+	D8EBD483106586CD00F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
+		name = "NDTrie.h: 48";
+		rLen = 0;
+		rLoc = 2661;
+		rType = 0;
+		vrLen = 2040;
+		vrLoc = 679;
+	};
+	D8EBD4841065870200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8710619CD500B91A81 /* NDTrie.h */;
+		name = "NDTrie.h: 43";
+		rLen = 0;
+		rLoc = 1677;
+		rType = 0;
+		vrLen = 2040;
+		vrLoc = 679;
+	};
+	D8EBD4851065870200F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 306";
+		rLen = 0;
+		rLoc = 8820;
+		rType = 0;
+		vrLen = 1085;
+		vrLoc = 8108;
+	};
+	D8EBD48E10658A6C00F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D8EBD479106586A200F13E41 /* NSObject.h */;
+		name = "NSObject.h: 82";
+		rLen = 19;
+		rLoc = 1455;
+		rType = 0;
+		vrLen = 824;
+		vrLoc = 1005;
+	};
+	D8EBD48F10658A6C00F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
+		name = "main.m: 55";
+		rLen = 0;
+		rLoc = 2982;
+		rType = 0;
+		vrLen = 2152;
+		vrLoc = 1484;
+	};
+	D8EBD49010658A6C00F13E41 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "'aTrie' undeclared (first use in this function)";
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 116;
+		rType = 1;
+	};
+	D8EBD49110658A6C00F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 117";
+		rLen = 0;
+		rLoc = 3242;
+		rType = 0;
+		vrLen = 1255;
+		vrLoc = 2565;
+	};
+	D8EBD4A310658AB600F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D88B7A8810619CD500B91A81 /* NDTrie.m */;
+		name = "NDTrie.m: 117";
+		rLen = 0;
+		rLoc = 3242;
+		rType = 0;
+		vrLen = 1255;
+		vrLoc = 2565;
+	};
+	D8EBD4A410658AB600F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 32A70AAB03705E1F00C91783 /* NDTrieTest_Prefix.pch */;
+		name = "NDTrieTest_Prefix.pch: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 162;
+		vrLoc = 0;
+	};
+	D8EBD4A510658AB600F13E41 /* XCBuildMessageTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "'_cmd' undeclared (first use in this function)";
+		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
+		fallbackIsa = XCBuildMessageTextBookmark;
+		rLen = 1;
+		rLoc = 49;
+		rType = 1;
+	};
+	D8EBD4A610658AB600F13E41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* main.m */;
+		name = "main.m: 55";
+		rLen = 0;
+		rLoc = 2804;
+		rType = 0;
+		vrLen = 2254;
+		vrLoc = 1381;
 	};
 }

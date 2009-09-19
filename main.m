@@ -46,6 +46,16 @@ int main (int argc, const char * argv[])
 	for( NSString * theString in [NSArray arrayWithContentsOfFile:kSampleFile] )
 		NSCAssert( [theLargeTrie containsString:theString], @"trie did NOT contain %@", theString );
 
+	NDTrie		* theCopy = [theTrie copy];
+	NSCParameterAssert( theCopy != nil );
+	NSCAssert( ![theCopy isKindOfClass:[NDMutableTrie class]], @"trie is a class of %@", [theCopy class] );
+	NSCAssert( [theTrie isEqualToTrie:theCopy], @"The two Trie are NOT Equal" );
+
+	NDMutableTrie		* theMutableCopy = [theTrie mutableCopy];
+	NSCParameterAssert( theMutableCopy != nil );
+	NSCAssert( [theMutableCopy isKindOfClass:[NDMutableTrie class]], @"trie is class of %@", [theMutableCopy class] );
+	NSCAssert( [theTrie isEqualToTrie:theMutableCopy], @"The two Trie are NOT Equal" );
+	
 	/*
 		NDMutableTrie
 	 */
