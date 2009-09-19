@@ -121,40 +121,38 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method initWithStrings:
 	@abstract Initialise a trie with a list of <tt>NSString</tt>s
-	@discussion <#discussion#>
+	@discussion The order of th strings is ignored, duplicates will be ignored.
 	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
  */
 - (id)initWithStrings:(NSString *)firstString, ...;
 /*!
 	@method initWithContentsOfFile:
-	@abstract Initialise a trie witgh contents of a file.
-	@discussion <#discussion#>
-	@param path <#description#>
+	@abstract Initialise a trie with contents of a file.
+	@discussion Attempts to create an NSArray with the contents of the file and then passes the array to <tt>-[NDTrie initWithArray:]</tt>.
+	@param path A path to a property list file generated from a <tt>NDTrie</tt> or <tt>NSArray</tt>
  */
 - (id)initWithContentsOfFile:(NSString *)path;
 /*!
 	@method initWithContentsOfURL:
 	@abstract Initialise a trie witgh contents of a file.
 	@discussion Attempts to create an NSArray with the contents of the file and then passes the array to <tt>-[NDTrie initWithArray:]</tt>.
-	@param url <#description#>
+	@param url A file url to a property list file generated from a <tt>NDTrie</tt> or <tt>NSArray</tt>
  */
 - (id)initWithContentsOfURL:(NSURL *)url;
 /*!
 	@method initWithStrings:count:
 	@abstract Initialise a trie with a c array.
-	@discussion Attempts to create an NSArray with the contents of the file and then passes the array to <tt>-[NDTrie initWithArray:]</tt>.
-	@param strings <#description#>
-	@param count <#description#>
-	@result <#result#>
+	@discussion The order of th strings is ignored, duplicates will be ignored.
+	@param strings A c array of <tt>NSString</tt>
+	@param count The number of strings within the c array.
  */
 - (id)initWithStrings:(NSString **)strings count:(NSUInteger)count;
 /*!
 	@method initWithStrings:arguments:
 	@abstract Initialise a trie with a <tt>va_list</tt> of <tt>NSString</tt>s
-	@discussion <#discussion#>
-	@param firstString <#description#>
-	@param arguments <#description#>
-	@result <#result#>
+	@discussion This method is used by the varable nubmer of aramgent methods, The order of th strings is ignored, duplicates will be ignored.
+	@param firstString The first string.
+	@param arguments A va_list for the rest of the strings, the list needs to be nil terminated.
  */
 - (id)initWithStrings:(NSString *)firstString arguments:(va_list)arguments;
 
@@ -169,18 +167,18 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@method containsString:
 	@abstract test if trie contains a string
 	@discussion Test for the existence of a string with the recieve, for the string to be found it must be a complete string, for example if the trie contains the word "catalog" then a test for "cat" would not nessecarily return <tt>YES</tt>.
-	@param string <#description#>
-	@result <#result#>
+	@param string The string to test for.
+	@result Returns <tt>YES</tt> if the recieve contains the string.
  */
 - (BOOL)containsString:(NSString *)string;
 /*!
 	@method containsStringWithPrefix:
 	@abstract Test if a trie contains any strings with a given prifix
 	@discussion Test for the existence of any string with the recieve that has the prefix <tt><i>prefix</i><tt>, for example if the trie contains the word "catalog" then a test for "cat" would return <tt>YES</tt>.
-	@param string <#description#>
-	@result <#result#>
+	@param prefix The prefix to test for.
+	@result Returns <tt>YES</tt> if the recieve contains at least one string with the prefix.
  */
-- (BOOL)containsStringWithPrefix:(NSString *)string;
+- (BOOL)containsStringWithPrefix:(NSString *)prefix;
 
 /*!
 	@method everyString
@@ -262,7 +260,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@method enumerateStringsUsingBlock:
 	@abstract Pass each members of a trie to a block.
 	@discussion Each string is passed to the block <tt><i>block</i></tt>, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
-	@param block <#description#>
+	@param block A block of the form <code>^(NSString * string, BOOL *stop)</code>
  */
 - (void)enumerateStringsUsingBlock:(void (^)(NSString * string, BOOL *stop))block;
 /*!
@@ -270,7 +268,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@abstract Pass each members of a trie with a given prefix to a block.
 	@discussion Each string with the given prefix <tt><i>prefix</i></tt> is passed to the block <tt><i>block</i></tt>, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
 	@param prefix The prefix each string passed to the block begin with.
-	@param block <#description#>
+	@param block A block of the form <code>^(NSString * string, BOOL *stop)</code>
  */
 - (void)enumerateStringsWithPrefix:(NSString*)prefix usingBlock:(void (^)(NSString * string, BOOL *stop))block;
 
@@ -278,7 +276,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@method everyStringPassingTest:
 	@abstract create an array with every string passing a test.
 	@discussion Each string is pass to the block and if the block returns <tt>YES</tt> the string added to the array returned on enumeration completion, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order. If part of you test is to test the prefix of each string then you will get better performance by using <tt>-[NDTrie everyStringWithPrefix:passingTest:]</tt>
-	@param predicate Block used to test each string.
+	@param predicate Block used to test each string of the form <code>BOOL ^(NSString * string, BOOL *stop)</code>
 	@result An <tt>NSArray</tt> containing every string that resulted in <tt><i>predicate</i><tt> returning true.
  */
 - (NSArray *)everyStringPassingTest:(BOOL (^)(NSString * string, BOOL *stop))predicate;
@@ -287,7 +285,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@abstract create an array with every string beging with a prefix and passing a test.
 	@discussion Each string with the prefix <tt><i>prefix</i></tt> is pass to the block and if the block returns <tt>YES</tt> the string added to the array returned on enumeration completion, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
 	@param prefix The prefix each string passed to the block begin with.
-	@param predicate Block used to test each string.
+	@param predicate Block used to test each string of the form <code>BOOL ^(NSString * string, BOOL *stop)</code>
 	@result An <tt>NSArray</tt> containing every string that resulted in <tt><i>predicate</i><tt> returning true.
  */
 - (NSArray *)everyStringWithPrefix:(NSString*)prefix passingTest:(BOOL (^)(NSString * string, BOOL *stop))predicate;
@@ -333,7 +331,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 - (void)addTrie:(NDTrie *)trie;
 /*!
 	@method addArray:
-	@abstract <#abstract#>
+	@abstract add an array of strings to a trie.
 	@discussion The order of the strings is of no consequence, duplicate strings are alowed but duplicates are not stored within the trie.
 	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
  */
@@ -343,7 +341,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@method removeString:
 	@abstract remove a string from a trie.
 	@discussion Removes the string <tt><i>string</i></tt> from the receiver, any strings with a prefix equal to the string <tt><i>string</i></tt> are left within the trie.
-	@param string <#description#>
+	@param string The string to search for and remove.
  */
 - (void)removeString:(NSString *)string;
 /*!
