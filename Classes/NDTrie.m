@@ -617,6 +617,9 @@ void forEveryStringFromNode( struct trieNode * aNode, NSString * aPrefix, BOOL(*
 				theCapacity = 1024 + theLength;
 	unichar		* theBytes = malloc( 1024 + theLength );
 	
+	if( aNode->terminalNode )
+		theContinue = aFunc( aPrefix, aContext );
+
 	if( aPrefix )
 		[aPrefix getCharacters:(void*)theBytes range:NSMakeRange(0,theLength)];
 

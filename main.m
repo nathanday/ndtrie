@@ -32,9 +32,9 @@ int main (int argc, const char * argv[])
 	
 	theTempArray = [theTrie everyStringWithPrefix:@"cat"];
 
-	NSCAssert( theTempArray.count == 2, @"every string with prefix cat contains %lu items", theTempArray.count );
+	NSCAssert( theTempArray.count == 3, @"every string with prefix cat contains %lu items", theTempArray.count );
 
-	for( NSString * theString in [NSArray arrayWithObjects:@"caterpillar", @"catalog", nil] )
+	for( NSString * theString in [NSArray arrayWithObjects:@"cat", @"caterpillar", @"catalog", nil] )
 		NSCAssert( [theTempArray containsObject:theString], @"every string did NOT contain %@", theString );
 
 	theTempArray = [theTrie everyStringWithPrefix:@"xyz"];
@@ -42,6 +42,9 @@ int main (int argc, const char * argv[])
 	NSCAssert( theTempArray != nil, @"every string with prefix xyz returned nil" );
 	NSCAssert( theTempArray.count == 0, @"every string with prefix cat contains %lu items", theTempArray.count );
 	
+	theTempArray = [theTrie everyStringWithPrefix:@"dog"];
+	NSCAssert( theTempArray.count == 1, @"every string with prefix dog contains %lu items", theTempArray.count );
+
 	NSCAssert( [[NDTrie trieWithArray:theTestTrueStrings] isEqualToTrie:[NDTrie trieWithArray:theTestTrueStrings]], @"The two Trie are NOT Equal" );
 
 	NSCAssert( ![[NDTrie trieWithArray:theTestTrueStrings] isEqualToTrie:[NDTrie trieWithArray:theTestFalseStrings]], @"The two Trie are Equal" );
@@ -92,7 +95,6 @@ int main (int argc, const char * argv[])
 
 	 for( NSString * theString in theAddArray )
 		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
-
 	
 	[theMutableTrie removeString:@"dog"];
 	NSCAssert( theMutableTrie.count == 15, @"The Trie had %lu strings", theMutableTrie.count );
