@@ -41,7 +41,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@class NDTrie
 	@abstract An immutable trie implemented in Objective-C
-	@discussion The purpose of <tt>NDTrie</tt> is store strings in way to quickly retrieving all strings with a common prefix, it could also be used as a set equivelent though whether you would get any performance improvement over <tt>NSSet</tt> would need to be tested, it is possible since NDTrie only needs to deal with <tt>NSString</tt>s. <tt>NDTrie</tt> an immutable class with it's contents being set as creation, for a mutable version use the subclass <tt>NDMutableTrie</tt>. NDTrie does not store any of the actual strings added to it, you can think of it as copyng each string, the strings are actually broken down into individual cahracters so that string with common prefixes can be associated together. The trie can be though of as a set, with only one unique version of each string is stored in the trie attempts to add a string already contained within the trie have no effect.
+	@discussion The purpose of <tt>NDTrie</tt> is store strings in way to quickly retrieving all strings with a common prefix, it could also be used as a set equivelent though whether you would get any performance improvement over <tt>NSSet</tt> would need to be tested, it is possible since NDTrie only needs to deal with <tt>NSString</tt>s. <tt>NDTrie</tt> an immutable class with it's contents being set as creation, for a mutable version use the subclass <tt>NDMutableTrie</tt>. The trie can be though of as a set, with only one unique version of each string is stored in the trie attempts to add a string already contained within the trie have no effect.
 	@author  Nathan Day
 	@version 1.0
 */
@@ -206,14 +206,14 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method enumerateStringsUsingFunction:
 	@abstract Pass each members of a trie to a function.
-	@discussion Each string is passed to the function <tt><i>func</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
+	@discussion Each string is passed to the function <tt><i>func</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. The enumeration occurs in an indeterminate order.
 	@param func The function called for each string, it should be of the form <code>BOOL func(NSString * string)</code>
  */
 - (void)enumerateStringsUsingFunction:(BOOL (*)(NSString * ))func;
 /*!
 	@method enumerateStringsWithPrefix:usingFunction:
 	@abstract Pass each members of a trie with a given prefix to a function.
-	@discussion Each string with the given prefix <tt><i>prefix</i></tt> is passed to the function <tt><i>func</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
+	@discussion Each string with the given prefix <tt><i>prefix</i></tt> is passed to the function <tt><i>func</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. The enumeration occurs in an indeterminate order.
 	@param prefix The prefix each string passed to the function begin with.
 	@param func The function passed each string, the passed in strings will be the full string including the prefix, it should be of the form <code>BOOL func(NSString * string)</code>
  */
@@ -221,7 +221,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method enumerateStringsUsingFunction:context:
 	@abstract Pass each members of a trie to a function.
-	@discussion Each string is passed to the function <tt><i>func</i></tt> along with the parameter <tt><i>context</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
+	@discussion Each string is passed to the function <tt><i>func</i></tt> along with the parameter <tt><i>context</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. The enumeration occurs in an indeterminate order.
 	@param func The function passed each string, it should be of the form <code>BOOL func(NSString * string, void * context)</code>
 	@param context An addtional parameter to be assed to each function call
  */
@@ -229,7 +229,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method enumerateStringsWithPrefix:usingFunction:context:
 	@abstract Pass each members of a trie with a given prefix to a function.
-	@discussion Each string with the given prefix <tt><i>prefix</i></tt> is passed to the function <tt><i>func</i></tt> along with the parameter <tt><i>context</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
+	@discussion Each string with the given prefix <tt><i>prefix</i></tt> is passed to the function <tt><i>func</i></tt> along with the parameter <tt><i>context</i></tt>, the function can at any time stop the enumeration by returning <tt>NO</tt>. The enumeration occurs in an indeterminate order.
 	@param prefix The prefix each string passed to the function begin with.
 	@param func The function passed each string, the passed in strings will be the full string including the prefix, it should be of the form <code>BOOL func(NSString * string, void * context)</code>
 	@param context An addtional parameter to be assed to each function call
@@ -259,14 +259,14 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method enumerateStringsUsingBlock:
 	@abstract Pass each members of a trie to a block.
-	@discussion Each string is passed to the block <tt><i>block</i></tt>, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
+	@discussion Each string is passed to the block <tt><i>block</i></tt>, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. The enumeration occurs in an indeterminate order.
 	@param block A block of the form <code>^(NSString * string, BOOL *stop)</code>
  */
 - (void)enumerateStringsUsingBlock:(void (^)(NSString * string, BOOL *stop))block;
 /*!
 	@method enumerateStringsWithPrefix:usingBlock:
 	@abstract Pass each members of a trie with a given prefix to a block.
-	@discussion Each string with the given prefix <tt><i>prefix</i></tt> is passed to the block <tt><i>block</i></tt>, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
+	@discussion Each string with the given prefix <tt><i>prefix</i></tt> is passed to the block <tt><i>block</i></tt>, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. The enumeration occurs in an indeterminate order.
 	@param prefix The prefix each string passed to the block begin with.
 	@param block A block of the form <code>^(NSString * string, BOOL *stop)</code>
  */
@@ -275,7 +275,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method everyStringPassingTest:
 	@abstract create an array with every string passing a test.
-	@discussion Each string is pass to the block and if the block returns <tt>YES</tt> the string added to the array returned on enumeration completion, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order. If part of you test is to test the prefix of each string then you will get better performance by using <tt>-[NDTrie everyStringWithPrefix:passingTest:]</tt>
+	@discussion Each string is pass to the block and if the block returns <tt>YES</tt> the string added to the array returned on enumeration completion, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. The enumeration occurs in an indeterminate order. If part of you test is to test the prefix of each string then you will get better performance by using <tt>-[NDTrie everyStringWithPrefix:passingTest:]</tt>
 	@param predicate Block used to test each string of the form <code>BOOL ^(NSString * string, BOOL *stop)</code>
 	@result An <tt>NSArray</tt> containing every string that resulted in <tt><i>predicate</i><tt> returning true.
  */
@@ -283,7 +283,7 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method everyStringWithPrefix:passingTest:
 	@abstract create an array with every string beging with a prefix and passing a test.
-	@discussion Each string with the prefix <tt><i>prefix</i></tt> is pass to the block and if the block returns <tt>YES</tt> the string added to the array returned on enumeration completion, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. This method does not work in quite the straight forward way as you might initial think, as each string is not stored in the reciever but is reconstructed from its internal format. The enumeration occurs in an indeterminate order.
+	@discussion Each string with the prefix <tt><i>prefix</i></tt> is pass to the block and if the block returns <tt>YES</tt> the string added to the array returned on enumeration completion, the block can at any time stop the enumeration by setting its parameter <tt><i>stop</i></tt> to <tt>YES</tt>. The enumeration occurs in an indeterminate order.
 	@param prefix The prefix each string passed to the block begin with.
 	@param predicate Block used to test each string of the form <code>BOOL ^(NSString * string, BOOL *stop)</code>
 	@result An <tt>NSArray</tt> containing every string that resulted in <tt><i>predicate</i><tt> returning true.

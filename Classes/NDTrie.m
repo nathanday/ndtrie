@@ -16,7 +16,7 @@ struct trieNode
 	unichar				key;
 	NSUInteger			count,
 						size;
-	BOOL				terminalNode;      // is it the last character of a string, think of trie containing 'cat' and 'catalog'
+	id					object;
 	struct trieNode		** children;
 };
 
@@ -176,7 +176,7 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 - (BOOL)containsString:(NSString *)aString
 {
 	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO, NULL, NULL );
-	return theNode != NULL && theNode->terminalNode;
+	return theNode != NULL && theNode->object != nil;
 }
 
 - (BOOL)containsStringWithPrefix:(NSString *)aString
@@ -412,7 +412,7 @@ static struct trieNode * _createNode( unichar aKey )
 	struct trieNode		* theNode = malloc( sizeof(struct trieNode) );
 	theNode->key = aKey;
 	theNode->children = NULL;
-	theNode->terminalNode = NO;
+	theNode->object = nil;
 	theNode->count = 0;
 	return theNode;
 }
@@ -426,6 +426,7 @@ static NSUInteger _deleteChildren( struct trieNode * aNode )
 		for( NSUInteger i = 0; i < aNode->count; i++ )
 		{
 			theCount += _deleteChildren( aNode->children[i] );
+			[aNode->children[i]->object release];
 			free( aNode->children[i] );
 		}
 
@@ -435,7 +436,7 @@ static NSUInteger _deleteChildren( struct trieNode * aNode )
 		aNode->size = 0;
 	}
 
-	if( aNode->terminalNode )
+	if( aNode->object != nil )
 		theCount++;
 
 	return theCount;
@@ -537,7 +538,7 @@ BOOL removeString( struct trieNode * aNode, NSString * aString, NSUInteger anInd
 	{
 		if( [aString length] == anIndex )
 		{
-			*aFoundNode = aNode->terminalNode;
+			*aFoundNode = aNode->object != nil;
 			theResult = YES;
 		}
 	}
@@ -552,6 +553,7 @@ BOOL removeString( struct trieNode * aNode, NSString * aString, NSUInteger anInd
 				if( removeString( aNode->children[theIndex], aString, anIndex+1, aFoundNode ) )
 				{
 					aNode->count--;
+					[aNode->children[theIndex]->object release];
 					free( aNode->children[theIndex] );
 					if( aNode->count > 0 )
 						memmove( &aNode->children[theIndex], &aNode->children[theIndex+1], (aNode->count-theIndex)*sizeof(struct trieNode*) );
@@ -582,6 +584,7 @@ NSUInteger removeChild( struct trieNode * aRoot, NSString * aPrefix )
 		if( theNode != NULL && theParent != NULL )
 		{
 			theRemoveCount = _deleteChildren( theNode );
+			[theNode->object release];
 			free( theNode );
 			memmove( &theParent->children[thePosition], &theParent->children[thePosition+1], (theParent->count-thePosition)*sizeof(struct trieNode*) );
 			theParent->count--;
@@ -600,8 +603,8 @@ BOOL addString( struct trieNode * aNode, NSString * aString )
 	struct trieNode		* theNode = findNode( aNode, aString, 0, YES, NULL, NULL );
 	NSCParameterAssert( theNode != NULL );
 
-	theNewString = theNode->terminalNode == NO;
-	theNode->terminalNode = YES;
+	theNewString = theNode->object == nil;
+	theNode->object = [aString copy];
 	return theNewString;
 }
 
@@ -609,42 +612,27 @@ BOOL addString( struct trieNode * aNode, NSString * aString )
 	forEveryStringFromNode uses malloc instead of a variable-length automatic array,
 	so that the string would not have to be repeatedly reconsructed and because an automatic array would take up alot more stack space
  */
-static BOOL _recusiveForEveryString( struct trieNode *, NSUInteger, NSUInteger *, unichar **, BOOL(*)(NSString*,void*), void * );
+static BOOL _recusiveForEveryString( struct trieNode *, BOOL(*)(NSString*,void*), void * );
 void forEveryStringFromNode( struct trieNode * aNode, NSString * aPrefix, BOOL(*aFunc)(NSString*,void*), void * aContext )
 {
 	BOOL		theContinue = YES;
-	NSUInteger	theLength = aPrefix ? [aPrefix length] : 0,
-				theCapacity = 1024 + theLength;
-	unichar		* theBytes = malloc( 1024 + theLength );
-	
-	if( aNode->terminalNode )
-		theContinue = aFunc( aPrefix, aContext );
 
-	if( aPrefix )
-		[aPrefix getCharacters:(void*)theBytes range:NSMakeRange(0,theLength)];
+	if( aNode->object != nil )
+		theContinue = aFunc( aNode->object, aContext );
 
 	for( NSUInteger i = 0; i < aNode->count && theContinue; i++ )
-		theContinue = _recusiveForEveryString( aNode->children[i], theLength, &theCapacity, &theBytes, aFunc, aContext );
-	free( theBytes );
+		theContinue = _recusiveForEveryString( aNode->children[i], aFunc, aContext );
 }
 
-BOOL _recusiveForEveryString( struct trieNode * aNode, NSUInteger aPos, NSUInteger * aCapacity, unichar ** aBytes, BOOL(*aFunc)(NSString*,void*), void * aContext )
+BOOL _recusiveForEveryString( struct trieNode * aNode, BOOL(*aFunc)(NSString*,void*), void * aContext )
 {
 	BOOL		theContinue = YES;
-	if( aPos >= *aCapacity )
-	{
-		*aCapacity *= 2;
-		*aBytes = realloc( *aBytes, *aCapacity );
-		NSCParameterAssert( *aBytes != NULL );
-	}
 
-	(*aBytes)[aPos] = aNode->key;
-
-	if( aNode->terminalNode )
-		theContinue = aFunc( [NSString stringWithCharacters:*aBytes length:aPos+1], aContext );
+	if( aNode->object != nil )
+		theContinue = aFunc( aNode->object, aContext );
 
 	for( NSUInteger i = 0; i < aNode->count && theContinue; i++ )
-		theContinue = _recusiveForEveryString( aNode->children[i], aPos+1, aCapacity, aBytes, aFunc, aContext );
+		theContinue = _recusiveForEveryString( aNode->children[i], aFunc, aContext );
 	return theContinue;
 }
 
@@ -660,3 +648,52 @@ BOOL nodesAreEqual( struct trieNode * aNodeA, struct trieNode * aNodeB )
 		theEqual = NO;
 	return theEqual;
 }
+
+
+/*
+	we could possibly use this if we extend NSTrie to contain any object with a string key
+ */
+#if 0
+/*
+ forEveryStringFromNode uses malloc instead of a variable-length automatic array,
+ so that the string would not have to be repeatedly reconsructed and because an automatic array would take up alot more stack space
+ */
+static BOOL _recusiveForEveryString( struct trieNode *, NSUInteger, NSUInteger *, unichar **, BOOL(*)(NSString*,void*), void * );
+void forEveryStringFromNode( struct trieNode * aNode, NSString * aPrefix, BOOL(*aFunc)(NSString*,void*), void * aContext )
+{
+	BOOL		theContinue = YES;
+	NSUInteger	theLength = aPrefix ? [aPrefix length] : 0,
+	theCapacity = 1024 + theLength;
+	unichar		* theBytes = malloc( 1024 + theLength );
+	
+	if( aNode->object != nil )
+		theContinue = aFunc( aPrefix, aContext );
+	
+	if( aPrefix )
+		[aPrefix getCharacters:(void*)theBytes range:NSMakeRange(0,theLength)];
+	
+	for( NSUInteger i = 0; i < aNode->count && theContinue; i++ )
+		theContinue = _recusiveForEveryString( aNode->children[i], theLength, &theCapacity, &theBytes, aFunc, aContext );
+	free( theBytes );
+}
+
+BOOL _recusiveForEveryString( struct trieNode * aNode, NSUInteger aPos, NSUInteger * aCapacity, unichar ** aBytes, BOOL(*aFunc)(NSString*,void*), void * aContext )
+{
+	BOOL		theContinue = YES;
+	if( aPos >= *aCapacity )
+	{
+		*aCapacity *= 2;
+		*aBytes = realloc( *aBytes, *aCapacity );
+		NSCParameterAssert( *aBytes != NULL );
+	}
+	
+	(*aBytes)[aPos] = aNode->key;
+	
+	if( aNode->object != nil )
+		theContinue = aFunc( [NSString stringWithCharacters:*aBytes length:aPos+1], aContext );
+	
+	for( NSUInteger i = 0; i < aNode->count && theContinue; i++ )
+		theContinue = _recusiveForEveryString( aNode->children[i], aPos+1, aCapacity, aBytes, aFunc, aContext );
+	return theContinue;
+}
+#endif
