@@ -201,7 +201,8 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 {
 	NSMutableArray		* theResult = [NSMutableArray arrayWithCapacity:[self count]];
 	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
-	forEveryStringFromNode( theNode, aPrefix, _addToArrayFunc, theResult );
+	if( theNode != nil )
+		forEveryStringFromNode( theNode, aPrefix, _addToArrayFunc, theResult );
 	return theResult;
 }
 
@@ -223,7 +224,8 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *))aFunc
 {
 	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
-	forEveryStringFromNode( theNode, aPrefix, (BOOL(*)(NSString*,void*))aFunc, NULL );
+	if( theNode != nil )
+		forEveryStringFromNode( theNode, aPrefix, (BOOL(*)(NSString*,void*))aFunc, NULL );
 }
 
 - (void)enumerateStringsUsingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
@@ -234,7 +236,8 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
 {
 	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
-	forEveryStringFromNode( theNode, aPrefix, aFunc, aContext );
+	if( theNode != nil )
+		forEveryStringFromNode( theNode, aPrefix, aFunc, aContext );
 }
 
 - (BOOL)writeToFile:(NSString *)aPath atomically:(BOOL)anAtomically
@@ -263,7 +266,8 @@ BOOL enumerateFunc( NSString * aString, void * aContext )
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingBlock:(void (^)(NSString * string, BOOL *stop))aBlock
 {
 	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
-	forEveryStringFromNode( theNode, aPrefix, enumerateFunc, (void*)aBlock );
+	if( theNode != nil )
+		forEveryStringFromNode( theNode, aPrefix, enumerateFunc, (void*)aBlock );
 }
 
 struct testData
@@ -290,7 +294,8 @@ BOOL testFunc( NSString * aString, void * aContext )
 {
 	struct testData		theData = { [NSMutableArray array], aPredicate };
 	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
-	forEveryStringFromNode( theNode, aPrefix, testFunc, (void*)&theData );
+	if( theNode != nil )
+		forEveryStringFromNode( theNode, aPrefix, testFunc, (void*)&theData );
 	return theData.array;;
 }
 
