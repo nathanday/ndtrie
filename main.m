@@ -37,6 +37,17 @@ int main (int argc, const char * argv[])
 	for( NSString * theString in [NSArray arrayWithObjects:@"cat", @"caterpillar", @"catalog", nil] )
 		NSCAssert( [theTempArray containsObject:theString], @"every string did NOT contain %@", theString );
 
+	theTempArray = [theTrie everyStringWithPrefix:@""];
+
+	NSCAssert( theTempArray.count == 7, @"every string with prefix '' contains %lu items", theTempArray.count );
+	
+	theTempArray = [theTrie everyStringWithPrefix:nil];
+	
+	NSCAssert( theTempArray.count == 7, @"every string with prefix '' contains %lu items", theTempArray.count );
+
+	for( NSString * theString in theTestTrueStrings )
+		NSCAssert( [theTempArray containsObject:theString], @"every string did NOT contain %@", theString );
+
 	theTempArray = [theTrie everyStringWithPrefix:@"xyz"];
 	
 	NSCAssert( theTempArray != nil, @"every string with prefix xyz returned nil" );

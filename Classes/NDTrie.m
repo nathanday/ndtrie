@@ -13,15 +13,16 @@ NSString		* const NDTrieIllegalObjectException = @"NDTrieIllegalObjectException"
 
 struct trieNode
 {
-	unichar				key;
-	NSUInteger			count,
-						size;
-	id					object;
-	struct trieNode		** children;
+	unichar							key;
+	NSUInteger						count,
+									size;
+	id								object;
+	__strong struct trieNode		** children;
 };
 
 static struct trieNode * findNode( struct trieNode *, NSString *, NSUInteger, BOOL, struct trieNode **, NSUInteger *);
 static BOOL removeString( struct trieNode *, NSString *, NSUInteger, BOOL * );
+static NSUInteger removeAllChildren( struct trieNode *);
 static NSUInteger removeChild( struct trieNode *, NSString * );
 static BOOL addString( struct trieNode *, NSString * );
 void forEveryStringFromNode( struct trieNode *, NSString *, BOOL(*)(NSString*,void*), void * );
@@ -167,6 +168,19 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 	return self;
 }
 
+- (void)dealloc
+{
+	removeAllChildren( [self root] );
+	free( root );
+	[super dealloc];
+}
+
+- (void)finalize
+{
+	removeAllChildren( [self root] );
+	free( root );
+	[super finalize];
+}
 
 - (NSUInteger)count
 {
@@ -200,7 +214,9 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 - (NSArray *)everyStringWithPrefix:(NSString *)aPrefix
 {
 	NSMutableArray		* theResult = [NSMutableArray arrayWithCapacity:[self count]];
-	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = [self root];
+	if( aPrefix != nil && [aPrefix length] > 0 )
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
 	if( theNode != nil )
 		forEveryStringFromNode( theNode, aPrefix, _addToArrayFunc, theResult );
 	return theResult;
@@ -223,7 +239,9 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *))aFunc
 {
-	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = [self root];
+	if( aPrefix != nil && [aPrefix length] > 0 )
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
 	if( theNode != nil )
 		forEveryStringFromNode( theNode, aPrefix, (BOOL(*)(NSString*,void*))aFunc, NULL );
 }
@@ -235,7 +253,9 @@ static BOOL _addToArrayFunc( NSString * aString, void * anArray )
 
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
 {
-	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = [self root];
+	if( aPrefix != nil && [aPrefix length] > 0 )
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
 	if( theNode != nil )
 		forEveryStringFromNode( theNode, aPrefix, aFunc, aContext );
 }
@@ -265,7 +285,9 @@ BOOL enumerateFunc( NSString * aString, void * aContext )
 
 - (void)enumerateStringsWithPrefix:(NSString*)aPrefix usingBlock:(void (^)(NSString * string, BOOL *stop))aBlock
 {
-	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = [self root];
+	if( aPrefix != nil && [aPrefix length] > 0 )
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
 	if( theNode != nil )
 		forEveryStringFromNode( theNode, aPrefix, enumerateFunc, (void*)aBlock );
 }
@@ -293,7 +315,9 @@ BOOL testFunc( NSString * aString, void * aContext )
 - (NSArray *)everyStringWithPrefix:(NSString*)aPrefix passingTest:(BOOL (^)(NSString * string, BOOL *stop))aPredicate
 {
 	struct testData		theData = { [NSMutableArray array], aPredicate };
-	struct trieNode		* theNode = findNode( [self root], aPrefix, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = [self root];
+	if( aPrefix != nil && [aPrefix length] > 0 )
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
 	if( theNode != nil )
 		forEveryStringFromNode( theNode, aPrefix, testFunc, (void*)&theData );
 	return theData.array;;
@@ -385,17 +409,23 @@ BOOL testFunc( NSString * aString, void * aContext )
 
 - (void)removeAllStrings
 {
-	count -= removeChild( [self root], NULL );
+	removeAllChildren( [self root] );
+	count = 0;
 }
 
 - (void)removeAllStringsWithPrefix:(NSString *)aPrefix
 {
-	NSUInteger			thePosition = 0;
-	struct trieNode		* theParent = nil,
-						* theNode = findNode( [self root], aPrefix, 0, NO, &theParent, &thePosition );
+	if( aPrefix != nil && [aPrefix length] > 0 )
+	{
+		NSUInteger			thePosition = 0;
+		struct trieNode		* theParent = nil,
+							* theNode = findNode( [self root], aPrefix, 0, NO, &theParent, &thePosition );
 
-	if( theNode != NULL && theParent != NULL )
-		count -= removeChild( [self root], aPrefix );
+		if( theNode != NULL && theParent != NULL )
+			count -= removeChild( [self root], aPrefix );
+	}
+	else
+		removeAllChildren( [self root] );
 }
 
 @end
@@ -417,7 +447,7 @@ static struct trieNode * _createNode( unichar aKey )
 	return theNode;
 }
 
-static NSUInteger _deleteChildren( struct trieNode * aNode )
+NSUInteger removeAllChildren( struct trieNode * aNode )
 {
 	NSUInteger	theCount = 0;
 
@@ -425,7 +455,7 @@ static NSUInteger _deleteChildren( struct trieNode * aNode )
 	{
 		for( NSUInteger i = 0; i < aNode->count; i++ )
 		{
-			theCount += _deleteChildren( aNode->children[i] );
+			theCount += removeAllChildren( aNode->children[i] );
 			[aNode->children[i]->object release];
 			free( aNode->children[i] );
 		}
@@ -573,26 +603,25 @@ BOOL removeString( struct trieNode * aNode, NSString * aString, NSUInteger anInd
 NSUInteger removeChild( struct trieNode * aRoot, NSString * aPrefix )
 {
 	NSUInteger		theRemoveCount = 0;
-	if( aPrefix )
-	{
-		NSUInteger			thePosition = 0;
-		struct trieNode		* theParent = nil,
-							* theNode = findNode( aRoot, aPrefix, 0, NO, &theParent, &thePosition );
+	NSCParameterAssert( aPrefix != nil );
 
-		NSCParameterAssert( theParent != theNode );
-		
-		if( theNode != NULL && theParent != NULL )
-		{
-			theRemoveCount = _deleteChildren( theNode );
-			[theNode->object release];
-			free( theNode );
-			memmove( &theParent->children[thePosition], &theParent->children[thePosition+1], (theParent->count-thePosition)*sizeof(struct trieNode*) );
-			theParent->count--;
-		}
-	}
-	else
+	NSUInteger			thePosition = 0;
+	struct trieNode		* theParent = nil,
+						* theNode = findNode( aRoot, aPrefix, 0, NO, &theParent, &thePosition );
+
+	NSCParameterAssert( theParent != theNode );
+	
+	if( theNode != NULL && theParent != NULL )
 	{
-		theRemoveCount = _deleteChildren( aRoot );
+		theRemoveCount = removeAllChildren( theNode );
+#ifndef __OBJC_GC__
+		[theNode->object release];
+#else
+		CFRelease(theNode->object);
+#endif
+		free( theNode );
+		memmove( &theParent->children[thePosition], &theParent->children[thePosition+1], (theParent->count-thePosition)*sizeof(struct trieNode*) );
+		theParent->count--;
 	}
 	return theRemoveCount;
 }
@@ -605,6 +634,10 @@ BOOL addString( struct trieNode * aNode, NSString * aString )
 
 	theNewString = theNode->object == nil;
 	theNode->object = [aString copy];
+#ifdef __OBJC_GC__
+	CFRetain(theNode->object);
+	[theNode->object release];
+#endif
 	return theNewString;
 }
 
