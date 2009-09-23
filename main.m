@@ -16,44 +16,44 @@ int main (int argc, const char * argv[])
 	NSCAssert( theTrie.count == 7, @"The Trie had %lu strings", theTrie.count );
 	
 	for( NSString * theString in theTestTrueStrings )
-		NSCAssert( [theTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+		NSCAssert( [theTrie containsObjectForKey:theString], @"The Trie did NOT contain %@", theString );
 
 	for( NSString * theString in theTestFalseStrings )
-		NSCAssert( ![theTrie containsString:theString], @"The Trie did contain %@", theString );
+		NSCAssert( ![theTrie containsObjectForKey:theString], @"The Trie did contain %@", theString );
 
-	NSCAssert( [theTrie containsStringWithPrefix:@"cat"], @"The Trie did NOT contain a string with prefix cat" );
+	NSCAssert( [theTrie containsObjectForKeyWithPrefix:@"cat"], @"The Trie did NOT contain a string with prefix cat" );
 
-	NSCAssert( ![theTrie containsStringWithPrefix:@"cats"], @"The Trie did contain a string with prefix cats" );
+	NSCAssert( ![theTrie containsObjectForKeyWithPrefix:@"cats"], @"The Trie did contain a string with prefix cats" );
 	
-	theTempArray = [theTrie everyString];
+	theTempArray = [theTrie everyObject];
 
 	for( NSString * theString in theTestTrueStrings )
 		NSCAssert( [theTempArray containsObject:theString], @"every string did NOT contain %@", theString );
 	
-	theTempArray = [theTrie everyStringWithPrefix:@"cat"];
+	theTempArray = [theTrie everyObjectForKeyWithPrefix:@"cat"];
 
 	NSCAssert( theTempArray.count == 3, @"every string with prefix cat contains %lu items", theTempArray.count );
 
 	for( NSString * theString in [NSArray arrayWithObjects:@"cat", @"caterpillar", @"catalog", nil] )
 		NSCAssert( [theTempArray containsObject:theString], @"every string did NOT contain %@", theString );
 
-	theTempArray = [theTrie everyStringWithPrefix:@""];
+	theTempArray = [theTrie everyObjectForKeyWithPrefix:@""];
 
 	NSCAssert( theTempArray.count == 7, @"every string with prefix '' contains %lu items", theTempArray.count );
 	
-	theTempArray = [theTrie everyStringWithPrefix:nil];
+	theTempArray = [theTrie everyObjectForKeyWithPrefix:nil];
 	
 	NSCAssert( theTempArray.count == 7, @"every string with prefix '' contains %lu items", theTempArray.count );
 
 	for( NSString * theString in theTestTrueStrings )
 		NSCAssert( [theTempArray containsObject:theString], @"every string did NOT contain %@", theString );
 
-	theTempArray = [theTrie everyStringWithPrefix:@"xyz"];
+	theTempArray = [theTrie everyObjectForKeyWithPrefix:@"xyz"];
 	
 	NSCAssert( theTempArray != nil, @"every string with prefix xyz returned nil" );
 	NSCAssert( theTempArray.count == 0, @"every string with prefix cat contains %lu items", theTempArray.count );
 	
-	theTempArray = [theTrie everyStringWithPrefix:@"dog"];
+	theTempArray = [theTrie everyObjectForKeyWithPrefix:@"dog"];
 	NSCAssert( theTempArray.count == 1, @"every string with prefix dog contains %lu items", theTempArray.count );
 
 	NSCAssert( [[NDTrie trieWithArray:theTestTrueStrings] isEqualToTrie:[NDTrie trieWithArray:theTestTrueStrings]], @"The two Trie are NOT Equal" );
@@ -63,7 +63,7 @@ int main (int argc, const char * argv[])
 	NDTrie		* theLargeTrie = [NDTrie trieWithContentsOfFile:kSampleFile];
 	NSCAssert( theLargeTrie.count == 182, @"large trie contains %lu items", theLargeTrie.count );
 	for( NSString * theString in [NSArray arrayWithContentsOfFile:kSampleFile] )
-		NSCAssert( [theLargeTrie containsString:theString], @"trie did NOT contain %@", theString );
+		NSCAssert( [theLargeTrie containsObjectForKey:theString], @"trie did NOT contain %@", theString );
 
 	NDTrie		* theCopy = [theTrie copy];
 	NSCParameterAssert( theCopy != nil );
@@ -85,14 +85,14 @@ int main (int argc, const char * argv[])
 	NSCAssert( theMutableTrie.count == 8, @"The Trie had %lu strings", theMutableTrie.count );
 
 	for( NSString * theString in [theTestTrueStrings arrayByAddingObject:@"cataclysm"] )
-		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+		NSCAssert( [theMutableTrie containsObjectForKey:theString], @"The Trie did NOT contain %@", theString );
 
 	
 	[theMutableTrie addStrings:@"donut", @"doodle", nil];
 	NSCAssert( theMutableTrie.count == 10, @"The Trie had %lu strings", theMutableTrie.count );
 	
 	for( NSString * theString in [NSArray arrayWithObjects:@"donut", @"doodle", nil] )
-		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+		NSCAssert( [theMutableTrie containsObjectForKey:theString], @"The Trie did NOT contain %@", theString );
 	
 	NDTrie		* theAddTrie = [NDTrie trieWithStrings:@"fable", @"fabric", @"fibre", @"creak",nil];
 	[theMutableTrie addTrie:theAddTrie];
@@ -105,34 +105,34 @@ int main (int argc, const char * argv[])
 	NSCAssert( theMutableTrie.count == 16, @"The Trie had %lu strings", theMutableTrie.count );
 
 	 for( NSString * theString in theAddArray )
-		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+		NSCAssert( [theMutableTrie containsObjectForKey:theString], @"The Trie did NOT contain %@", theString );
 	
-	[theMutableTrie removeString:@"dog"];
+	[theMutableTrie removeObjectForKey:@"dog"];
 	NSCAssert( theMutableTrie.count == 15, @"The Trie had %lu strings", theMutableTrie.count );
-	NSCAssert( ![theMutableTrie containsString:@"dog"], @"The Trie did contain dog" );
+	NSCAssert( ![theMutableTrie containsObjectForKey:@"dog"], @"The Trie did contain dog" );
 
-	[theMutableTrie removeString:@"cata"];
+	[theMutableTrie removeObjectForKey:@"cata"];
 	NSCAssert( theMutableTrie.count == 15, @"The Trie had %lu strings", theMutableTrie.count );
 	for( NSString * theString in [NSArray arrayWithObjects:@"catalog", @"cataclysm", @"catacomb", nil] )
-		NSCAssert( [theMutableTrie containsString:theString], @"The Trie did NOT contain %@", theString );
+		NSCAssert( [theMutableTrie containsObjectForKey:theString], @"The Trie did NOT contain %@", theString );
 
-	[theMutableTrie removeAllStringsWithPrefix:@"cata"];
+	[theMutableTrie removeAllObjectsForKeysWithPrefix:@"cata"];
 	NSCAssert( theMutableTrie.count == 12, @"The Trie had %lu strings", theMutableTrie.count );
 	for( NSString * theString in [NSArray arrayWithObjects:@"catalog", @"cataclysm", @"catacomb", nil] )
-		NSCAssert( ![theMutableTrie containsString:theString], @"The Trie did contain %@", theString );
+		NSCAssert( ![theMutableTrie containsObjectForKey:theString], @"The Trie did contain %@", theString );
 
-	[theMutableTrie removeAllStringsWithPrefix:@"xyz"];
+	[theMutableTrie removeAllObjectsForKeysWithPrefix:@"xyz"];
 	NSCAssert( theMutableTrie.count == 12, @"The Trie had %lu strings", theMutableTrie.count );
 	for( NSString * theString in [NSArray arrayWithObjects:@"catalog", @"cataclysm", @"catacomb", nil] )
-		NSCAssert( ![theMutableTrie containsString:theString], @"The Trie did contain %@", theString );
+		NSCAssert( ![theMutableTrie containsObjectForKey:theString], @"The Trie did contain %@", theString );
 	
-	NSArray		* theRemaining = [theMutableTrie everyString];
+	NSArray		* theRemaining = [theMutableTrie everyObject];
 	NSCAssert( theRemaining.count == 12, @"The Trie had %lu strings", theRemaining.count );
 
-	[theMutableTrie removeAllStrings];
+	[theMutableTrie removeAllObjects];
 	NSCAssert( theMutableTrie.count == 0, @"The Trie had %lu strings", theMutableTrie.count );
 	for( NSString * theString in theTestTrueStrings )
-		NSCAssert( ![theMutableTrie containsString:theString], @"The Trie did contain %@", theString );
+		NSCAssert( ![theMutableTrie containsObjectForKey:theString], @"The Trie did contain %@", theString );
 	
 	NSLog( @"\n%@", theMutableTrie );
 	[pool drain];
