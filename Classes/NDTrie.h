@@ -30,12 +30,6 @@
 	@date Thursday September 17 2009
  */
 
-/*!
-	@const NDTrieIllegalObjectException
-	@discussion Name of an exception that occurs when you attempt to add an object that is not a kind of <tt>NSString</tt> to a <tt>NDTrie</tt>.
- */
-extern NSString		* const NDTrieIllegalObjectException;
-
 #import <Foundation/Foundation.h>
 
 /*!
@@ -64,9 +58,15 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@method trieWithArray:
 	@abstract Create a new trie from the contents of an <tt>NSArray</tt>.
 	@discussion The new trie contains the strings contained within <tt><i>array</i></tt>, duppicates with the array are allowed but only one will be added.
-	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
 + (id)trieWithArray:(NSArray *)array;
+/*!
+	@method trieWithDictionary:
+	@abstract Create a new trie from the contents of an <tt>NSDictionary</tt>.
+	@discussion The new trie contains the objects and keys contained within <tt><i>idctionary</i></tt>.
+	@param dictionary A dictionary of objects with string keys, if a key within the dictionary is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+ */
 + (id)trieWithDictionary:(NSDictionary *)dictionary;
 /*!
 	@method trieWithTrie:
@@ -78,41 +78,62 @@ extern NSString		* const NDTrieIllegalObjectException;
 /*!
 	@method trieWithStrings:
 	@abstract Create a new trie from a list of <tt>NSString</tt>s.
-	@discussion The new trie contains the strings contained within the list, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown. 
-	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@discussion The new trie contains the strings contained within the list, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown. 
+	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
 + (id)trieWithStrings:(NSString *)firstString, ...;
+/*!
+	@method trieWithObjectsAndKeys:
+	@abstract Create a new trie from a list of objects and keys.
+	@discussion The new trie contains the objects and keys contained within the list, if a key within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown. 
+	@param firstObject A list of objects and keys
+ */
 + (id)trieWithObjectsAndKeys:(id)firstObject , ...;
 /*!
 	@method trieWithContentsOfFile:
 	@abstract Create a new trie with the contents of a file.
-	@discussion Attempts to create an NSArray with the contents of the file at <tt><i>path</i></tt> and then passes the array to <tt>-[NDTrie initWithArray:]</tt>, if an object within the file is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@discussion Attempts to create an NSArray with the contents of the file at <tt><i>path</i></tt> and then passes the array to <tt>-[NDTrie initWithArray:]</tt>, if an object within the file is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
 	@param path A path to a property list file generated from a <tt>NDTrie</tt> or <tt>NSArray</tt>
  */
 + (id)trieWithContentsOfFile:(NSString *)path;
 /*!
 	@method trieWithContentsOfURL:
 	@abstract Create a new trie with the contents of a file.
-	@discussion Attempts to create an NSArray with the contents of the file at <tt><i>url</i></tt> and then passes the array to <tt>-[NDTrie initWithArray:]</tt>, if an object within the file is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@discussion Attempts to create an NSArray with the contents of the file at <tt><i>url</i></tt> and then passes the array to <tt>-[NDTrie initWithArray:]</tt>, if an object within the file is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
 	@param url A file url to a property list file generated from a <tt>NDTrie</tt> or <tt>NSArray</tt>
  */
 + (id)trieWithContentsOfURL:(NSURL *)url;
 /*!
 	@method trieWithStrings:count:
 	@abstract Create a new trie with the content sof a c array.
-	@discussion Creates and returns a trie that includes a given number of objects from a given C array.
+	@discussion Creates and returns a trie that includes a given number of strings from a given C array.
 	@param strings A C array of <tt>NSString</tt>s
 	@param count Tbe number of <tt>NSString</tt>s in the c array <tt><i>strings</i></tt>
  */
 + (id)trieWithStrings:(const NSString **)strings count:(NSUInteger)count;
+/*!
+	@method trieWithObjects:forKeys:count:
+	@abstract Create a new trie with the content sof of a c array.
+	@discussion Creates and returns a trie that includes a given number of objects  and keys from a given C array.
+	@param objects a c array of objects
+	@param keys a c array of <tt>NSString</tt>s
+	@param count The number of objects and keys
+ */
 + (id)trieWithObjects:(id *)objects forKeys:(NSString **)keys count:(NSUInteger)count;
 /*!
 	@method initWithArray:
 	@abstract Initialise a trie with the contents of an <tt>NSArray</tt>.
 	@discussion The trie will contain the strings contained within <tt><i>array</i></tt>, duplicates strings are allowed but only one will be added.
-	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
 - (id)initWithArray:(NSArray *)array;
+/*!
+	@method initWithDictionary:
+	@abstract Initialise a trie with the contents of an <tt>NSDictionary</tt>.
+	@discussion The trie will contain the objects and keys contained within <tt><i>dictionary</i></tt>.
+	@param dictionary An dictionary of objects and keys, if a key within the dictionary is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+	@result <#result#>
+ */
 - (id)initWithDictionary:(NSDictionary *)dictionary;
 /*!
 	@method initWithTrie:
@@ -125,9 +146,15 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@method initWithStrings:
 	@abstract Initialise a trie with a list of <tt>NSString</tt>s
 	@discussion The order of th strings is ignored, duplicates will be ignored.
-	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
 - (id)initWithStrings:(NSString *)firstString, ...;
+/*!
+	@method initWithObjectsAndKeys:
+	@abstract Initialise a trie with a list of objects and keys.
+	@discussion The object and key pairs are added to the reciever, if a key within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+	@param firstObject A list of objects and key paris.
+ */
 - (id)initWithObjectsAndKeys:(id)firstObject , ...;
 /*!
 	@method initWithContentsOfFile:
@@ -151,6 +178,14 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@param count The number of strings within the c array.
  */
 - (id)initWithStrings:(NSString **)strings count:(NSUInteger)count;
+/*!
+	@method initWithObjects:forKeys:count:
+	 @abstract Initialize a trie with the contents of of a c array.
+	 @discussion Initializes a trie that includes a given number of objects and keys from a given C arrays.
+	 @param objects a c array of objects
+	 @param keys a c array of <tt>NSString</tt>s
+	 @param count The number of objects and keys
+ */
 - (id)initWithObjects:(id *)objects forKeys:(NSString **)keys count:(NSUInteger)count;
 /*!
 	@method initWithStrings:arguments:
@@ -160,6 +195,14 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@param arguments A va_list for the rest of the strings, the list needs to be nil terminated.
  */
 - (id)initWithStrings:(NSString *)firstString arguments:(va_list)arguments;
+/*!
+	@method initWithObjectsAndKeys:arguments:
+	@abstract <#abstract#>
+	@discussion <#discussion#>
+	@param firstObject <#description#>
+	@param arguments <#description#>
+	@result <#result#>
+ */
 - (id)initWithObjectsAndKeys:(id)firstObject arguments:(va_list)arguments;
 
 /*!
@@ -186,6 +229,13 @@ extern NSString		* const NDTrieIllegalObjectException;
  */
 - (BOOL)containsObjectForKeyWithPrefix:(NSString *)prefix;
 
+/*!
+	@method objectForKey:
+	@abstract <#abstract#>
+	@discussion <#discussion#>
+	@param key <#description#>
+	@result <#result#>
+ */
 - (id)objectForKey:(NSString *)key;
 /*!
 	@method everyObject
@@ -315,14 +365,28 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@discussion The recieve may already contain an equivelent string, in which case no change to the trie will occur.
  */
 - (void)addString:(NSString *)string;
+/*!
+	@method setObject:forKey:
+	@abstract <#abstract#>
+	@discussion <#discussion#>
+	@param object <#description#>
+	@param string <#description#>
+ */
 - (void)setObject:(id)object forKey:(NSString *)string;
 /*!
 	@method addStrings:
 	@abstract Add a list of strings to a trie.
 	@discussion The order of the strings is of no consequence, duplicate strings are alowed but duplicates are not stored within the trie.
-	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
 - (void)addStrings:(NSString *)firstString, ...;
+/*!
+	@method setObjectsAndKeys:
+	@abstract <#abstract#>
+	@discussion <#discussion#>
+	@param firstObject, <#description#>
+	@param ... <#description#>
+ */
 - (void)setObjectsAndKeys:(id)firstObject, ...;
 /*!
 	@method addStrings:count:
@@ -332,6 +396,14 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@param count the number of elements within <tt><i>strings</i></tt>
  */
 - (void)addStrings:(NSString **)strings count:(NSUInteger)count;
+/*!
+	@method setObjects:forKeys:count:
+	@abstract <#abstract#>
+	@discussion <#discussion#>
+	@param objects <#description#>
+	@param keys <#description#>
+	@param count <#description#>
+ */
 - (void)setObjects:(id *)objects forKeys:(NSString **)keys count:(NSUInteger)count;
 /*!
 	@method addTrie:
@@ -343,9 +415,15 @@ extern NSString		* const NDTrieIllegalObjectException;
 	@method addArray:
 	@abstract add an array of strings to a trie.
 	@discussion The order of the strings is of no consequence, duplicate strings are alowed but duplicates are not stored within the trie.
-	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NDTrieIllegalObjectException</tt> is thrown.
+	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
 - (void)addArray:(NSArray *)array;
+/*!
+	@method addDictionay:
+	@abstract <#abstract#>
+	@discussion <#discussion#>
+	@param dictionary <#description#>
+ */
 - (void)addDictionay:(NSDictionary *)dictionary;
 
 /*!

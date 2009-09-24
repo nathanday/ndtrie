@@ -9,24 +9,28 @@
 #import "NDTrie.h"
 #include <string.h>
 
-NSString		* const NDTrieIllegalObjectException = @"NDTrieIllegalObjectException";
-
 struct trieNode
 {
-	unichar							key;
+	NSUInteger						key;
 	NSUInteger						count,
 									size;
 	id								object;
 	__strong struct trieNode		** children;
 };
 
-static struct trieNode * findNode( struct trieNode *, NSString *, NSUInteger, BOOL, struct trieNode **, NSUInteger *);
-static BOOL removeObjectForKey( struct trieNode *, NSString *, NSUInteger, BOOL * );
+static struct trieNode * findNode( struct trieNode *, id, NSUInteger, BOOL, struct trieNode **, NSUInteger *, NSUInteger (*)( id, NSUInteger ));
+static BOOL removeObjectForKey( struct trieNode *, id, NSUInteger, BOOL *, NSUInteger (*)( id, NSUInteger ) );
 static NSUInteger removeAllChildren( struct trieNode *);
-static NSUInteger removeChild( struct trieNode *, NSString * );
-static BOOL setObjectForKey( struct trieNode *, id, NSString * );
-void forEveryObjectFromNode( struct trieNode *, NSString *, BOOL(*)(id,void*), void * );
-BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
+static NSUInteger removeChild( struct trieNode *, id, NSUInteger (*)( id, NSUInteger ) );
+static BOOL setObjectForKey( struct trieNode *, id, id, NSUInteger (*)( id, NSUInteger ) );
+static void forEveryObjectFromNode( struct trieNode *, BOOL(*)(id,void*), void * );
+static BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
+static struct trieNode * copyNode( struct trieNode * );
+
+static NSUInteger keyComponentForString( id anObject, NSUInteger anIndex )
+{
+	return anIndex < [anObject length] ? [anObject characterAtIndex:anIndex] : NSNotFound;
+}
 
 static BOOL _addTrieFunc( NSString * aString, void * aContext )
 {
@@ -116,15 +120,15 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 		for( NSString * theString in anArray )
 		{
 			if( ![theString isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
-			count += setObjectForKey( [self root], theString, theString );
+				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+			count += setObjectForKey( [self root], theString, theString, keyComponentForString );
 		}
 #else
 		for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
 		{
 			NSString		* theString = [anArray objectAtIndex:i];
 			if( ![theString isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
 			count += setObjectForKey( [self root], theString, theString );
 		}
 #endif
@@ -140,8 +144,8 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 		for( NSString * theKey in aDictionary )
 		{
 			if( ![theKey isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
-			count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey );
+				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
+			count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey, keyComponentForString );
 		}
 #else
 		NSArray		* theKeysArray = [aDictionary allKeys];
@@ -149,7 +153,7 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 		{
 			NSString		* theKey = [theKeysArray objectAtIndex:i];
 			if( ![theKey isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
+				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
 			count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey );
 		}
 #endif
@@ -160,7 +164,7 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 - (id)initWithTrie:(NDTrie *)anAnotherTrie
 {
 	if( (self = [self init]) != nil )
-		[anAnotherTrie enumerateObjectsUsingFunction:_addTrieFunc context:(void*)self];
+		root = copyNode( [anAnotherTrie root] );
 	return self;
 }
 
@@ -205,7 +209,7 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 	if( (self = [self init]) != nil )
 	{
 		for( NSUInteger i = 0; i < aCount; i++ )
-			count += setObjectForKey( [self root], anObjects[i], aKeys[i] );
+			count += setObjectForKey( [self root], anObjects[i], aKeys[i], keyComponentForString );
 	}
 	return self;
 }
@@ -219,9 +223,9 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 		do
 		{
 			if( ![theString isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
 
-			count += setObjectForKey( [self root], theString, theString );
+			count += setObjectForKey( [self root], theString, theString, keyComponentForString );
 		}
 		while( (theString = va_arg( anArguments, NSString * ) ) != nil );
 	}
@@ -240,9 +244,9 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 			if( theKey == nil )
 				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"found nil key" userInfo:nil];
 			if( ![theKey isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
+				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
 			
-			count += setObjectForKey( [self root], theObject, theKey );
+			count += setObjectForKey( [self root], theObject, theKey, keyComponentForString );
 		}
 		while( (theObject = va_arg( anArguments, id ) ) != nil );
 	}
@@ -270,19 +274,19 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 
 - (BOOL)containsObjectForKey:(NSString *)aString
 {
-	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO, NULL, NULL, keyComponentForString );
 	return theNode != NULL && theNode->object != nil;
 }
 
 - (BOOL)containsObjectForKeyWithPrefix:(NSString *)aString
 {
-	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = findNode( (struct trieNode *)root, aString, 0, NO, NULL, NULL, keyComponentForString );
 	return theNode != NULL;
 }
 
 - (id)objectForKey:(NSString *)aKey
 {
-	struct trieNode		* theNode = findNode( (struct trieNode *)root, aKey, 0, NO, NULL, NULL );
+	struct trieNode		* theNode = findNode( (struct trieNode *)root, aKey, 0, NO, NULL, NULL, keyComponentForString );
 	return theNode != NULL ? theNode->object : nil;
 }
 
@@ -294,7 +298,7 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 - (NSArray *)everyObject
 {
 	NSMutableArray		* theResult = [NSMutableArray arrayWithCapacity:[self count]];
-	forEveryObjectFromNode( [self root], NULL, _addToArrayFunc, theResult );
+	forEveryObjectFromNode( [self root], _addToArrayFunc, theResult );
 	return theResult;
 }
 
@@ -303,9 +307,9 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 	NSMutableArray		* theResult = [NSMutableArray arrayWithCapacity:[self count]];
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
-		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL, keyComponentForString );
 	if( theNode != nil )
-		forEveryObjectFromNode( theNode, aPrefix, _addToArrayFunc, theResult );
+		forEveryObjectFromNode( theNode, _addToArrayFunc, theResult );
 	return theResult;
 }
 
@@ -321,30 +325,30 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 
 - (void)enumerateObjectsUsingFunction:(BOOL (*)(NSString *))aFunc
 {
-	forEveryObjectFromNode( [self root], NULL, (BOOL(*)(NSString*,void*))aFunc, NULL );
+	forEveryObjectFromNode( [self root], (BOOL(*)(NSString*,void*))aFunc, NULL );
 }
 
 - (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *))aFunc
 {
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
-		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL, keyComponentForString );
 	if( theNode != nil )
-		forEveryObjectFromNode( theNode, aPrefix, (BOOL(*)(NSString*,void*))aFunc, NULL );
+		forEveryObjectFromNode( theNode, (BOOL(*)(NSString*,void*))aFunc, NULL );
 }
 
 - (void)enumerateObjectsUsingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
 {
-	forEveryObjectFromNode( [self root], NULL, aFunc, aContext );
+	forEveryObjectFromNode( [self root], aFunc, aContext );
 }
 
 - (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
 {
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
-		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL, keyComponentForString );
 	if( theNode != nil )
-		forEveryObjectFromNode( theNode, aPrefix, aFunc, aContext );
+		forEveryObjectFromNode( theNode, aFunc, aContext );
 }
 
 - (BOOL)writeToFile:(NSString *)aPath atomically:(BOOL)anAtomically
@@ -367,16 +371,16 @@ BOOL enumerateFunc( NSString * aString, void * aContext )
 }
 - (void)enumerateObjectsUsingBlock:(void (^)(NSString *, BOOL *))aBlock
 {
-	forEveryObjectFromNode( [self root], NULL, enumerateFunc, (void*)aBlock );
+	forEveryObjectFromNode( [self root], enumerateFunc, (void*)aBlock );
 }
 
 - (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingBlock:(void (^)(NSString * string, BOOL *stop))aBlock
 {
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
-		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL, keyComponentForString );
 	if( theNode != nil )
-		forEveryObjectFromNode( theNode, aPrefix, enumerateFunc, (void*)aBlock );
+		forEveryObjectFromNode( theNode, enumerateFunc, (void*)aBlock );
 }
 
 struct testData
@@ -395,7 +399,7 @@ BOOL testFunc( id anObject, void * aContext )
 - (NSArray *)everyObjectPassingTest:(BOOL (^)(id, BOOL *))aPredicate
 {
 	struct testData		theData = { [NSMutableArray array], aPredicate };
-	forEveryObjectFromNode( [self root], NULL, testFunc, (void*)&theData );
+	forEveryObjectFromNode( [self root], testFunc, (void*)&theData );
 	return theData.array;;
 }
 
@@ -404,9 +408,9 @@ BOOL testFunc( id anObject, void * aContext )
 	struct testData		theData = { [NSMutableArray array], aPredicate };
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
-		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL );
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL, keyComponentForString );
 	if( theNode != nil )
-		forEveryObjectFromNode( theNode, aPrefix, testFunc, (void*)&theData );
+		forEveryObjectFromNode( theNode, testFunc, (void*)&theData );
 	return theData.array;;
 }
 
@@ -438,7 +442,7 @@ BOOL testFunc( id anObject, void * aContext )
 
 - (void)setObject:(id)anObject forKey:(NSString *)aString;
 {
-	count += setObjectForKey( [self root], anObject, aString );
+	count += setObjectForKey( [self root], anObject, aString, keyComponentForString );
 }
 
 - (void)addStrings:(NSString *)aFirstString, ...
@@ -451,9 +455,9 @@ BOOL testFunc( id anObject, void * aContext )
 	do
 	{
 		if( ![theString isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
 
-		count += setObjectForKey( [self root], theString, theString );
+		count += setObjectForKey( [self root], theString, theString, keyComponentForString );
 	}
 	while( (theString = va_arg( theArgList, NSString * ) ) != nil );
 
@@ -473,9 +477,9 @@ BOOL testFunc( id anObject, void * aContext )
 		if( theKey == nil )
 			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"missing key for object" userInfo:nil];
 		if( ![theKey isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
+			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
 		
-		count += setObjectForKey( [self root], theObject, theKey );
+		count += setObjectForKey( [self root], theObject, theKey, keyComponentForString );
 	}
 	while( (theObject = va_arg( theArgList, id ) ) != nil );
 	
@@ -485,13 +489,13 @@ BOOL testFunc( id anObject, void * aContext )
 - (void)addStrings:(NSString **)aStrings count:(NSUInteger)aCount
 {
 	for( NSUInteger i = 0; i < aCount; i++ )
-		count += setObjectForKey( [self root], aStrings[i], aStrings[i] );
+		count += setObjectForKey( [self root], aStrings[i], aStrings[i], keyComponentForString );
 }
 
 - (void)setObjects:(id *)anObjects forKeys:(id *)aKeys count:(NSUInteger)aCount
 {
 	for( NSUInteger i = 0; i < aCount; i++ )
-		count += setObjectForKey( [self root], anObjects[i], aKeys[i] );
+		count += setObjectForKey( [self root], anObjects[i], aKeys[i], keyComponentForString );
 }
 
 - (void)addTrie:(NDTrie *)aTrie
@@ -505,15 +509,15 @@ BOOL testFunc( id anObject, void * aContext )
 	for( NSString * theString in anArray )
 	{
 		if( ![theString isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
-		count += setObjectForKey( [self root], theString, theString );
+			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+		count += setObjectForKey( [self root], theString, theString, keyComponentForString );
 	}
 #else
 	for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
 	{
 		NSString	* theString = [anArray objectAtIndex:i];
 		if( ![theString isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
+			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
 		count += setObjectForKey( [self root], theString, theString );
 	}
 #endif
@@ -526,15 +530,15 @@ BOOL testFunc( id anObject, void * aContext )
 	for( NSString * theKey in theKeysArray )
 	{
 		if( ![theKey isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
-		count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey );
+			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
+		count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey, keyComponentForString );
 	}
 #else
 	for( NSUInteger i = 0, c = [theKeysArray count]; i < c; i++ )
 	{
 		NSString	* theKey = [theKeysArray objectAtIndex:i];
 		if( ![theKey isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NDTrieIllegalObjectException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
+			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
 		count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey );
 	}
 #endif
@@ -543,7 +547,7 @@ BOOL testFunc( id anObject, void * aContext )
 - (void)removeObjectForKey:(NSString *)aString
 {
 	BOOL	theFoundNode = NO;
-	removeObjectForKey( [self root], aString, 0, &theFoundNode );	
+	removeObjectForKey( [self root], aString, 0, &theFoundNode, keyComponentForString );	
 	if( theFoundNode )
 		count--;
 }
@@ -560,10 +564,10 @@ BOOL testFunc( id anObject, void * aContext )
 	{
 		NSUInteger			thePosition = 0;
 		struct trieNode		* theParent = nil,
-							* theNode = findNode( [self root], aPrefix, 0, NO, &theParent, &thePosition );
+							* theNode = findNode( [self root], aPrefix, 0, NO, &theParent, &thePosition, keyComponentForString );
 
 		if( theNode != NULL && theParent != NULL )
-			count -= removeChild( [self root], aPrefix );
+			count -= removeChild( [self root], aPrefix, keyComponentForString );
 	}
 	else
 		removeAllChildren( [self root] );
@@ -578,7 +582,7 @@ BOOL testFunc( id anObject, void * aContext )
 }
 @end
 
-static struct trieNode * _createNode( unichar aKey )
+static struct trieNode * _createNode( NSUInteger aKey )
 {
 	struct trieNode		* theNode = malloc( sizeof(struct trieNode) );
 	theNode->key = aKey;
@@ -616,7 +620,7 @@ NSUInteger removeAllChildren( struct trieNode * aNode )
 /*
 	Perform binary search to find node for key or location to insert node
  */
-inline static NSUInteger _indexForChild( struct trieNode * aNode, unichar aKey )
+inline static NSUInteger _indexForChild( struct trieNode * aNode, NSUInteger aKey )
 {
 	NSUInteger		theIndex = NSNotFound;
 	if( aNode->count > 0 )
@@ -647,81 +651,89 @@ inline static NSUInteger _indexForChild( struct trieNode * aNode, unichar aKey )
 	Finds a node, if aCreate == YES nodes are created as needed but the final node is not set to terminal node
 	Should not return NULL if aCreate == YES
  */
-static struct trieNode * findNode( struct trieNode * aNode, NSString * aString, NSUInteger anIndex, BOOL aCreate, struct trieNode ** aParent, NSUInteger * anPosition )
+static struct trieNode * findNode( struct trieNode * aNode, id aKey, NSUInteger anIndex, BOOL aCreate, struct trieNode ** aParent, NSUInteger * anPosition, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
 {
-	struct trieNode		* theNode = nil;
-	unichar				theCharacter = [aString characterAtIndex:anIndex];
+	struct trieNode		* theNode = NULL;
+	NSUInteger			theKeyComponent = aKeyComponentFunc( aKey, anIndex );
 
-	if( aNode->children != NULL )
+	if( theKeyComponent != NSNotFound )
 	{
-		NSUInteger		theIndex = _indexForChild( aNode, theCharacter );
-		if( theIndex >= aNode->count || aNode->children[theIndex]->key != theCharacter )
+		if( aNode->children != NULL )
 		{
-			if( aCreate )
+			NSUInteger		theIndex = _indexForChild( aNode, theKeyComponent );
+			if( theIndex >= aNode->count || aNode->children[theIndex]->key != theKeyComponent )
 			{
-				if( aNode->count >= aNode->size )
+				if( aCreate )
 				{
-					aNode->size <<= 1;
-					aNode->children = realloc( aNode->children, aNode->size*sizeof(struct trieNode) );
-					NSCParameterAssert( aNode->children != NULL );
+					if( aNode->count >= aNode->size )
+					{
+						aNode->size <<= 1;
+						aNode->children = realloc( aNode->children, aNode->size*sizeof(struct trieNode) );
+						NSCParameterAssert( aNode->children != NULL );
+					}
+					memmove( &aNode->children[theIndex+1], &aNode->children[theIndex], (aNode->count-theIndex)*sizeof(struct trieNode*) );
+					aNode->children[theIndex] = _createNode( theKeyComponent );
+					theNode = aNode->children[theIndex];
+					aNode->count++;
+					if( anPosition )
+						*anPosition = theIndex;
+					if( aParent )
+						*aParent = aNode;
+					
 				}
-				memmove( &aNode->children[theIndex+1], &aNode->children[theIndex], (aNode->count-theIndex)*sizeof(struct trieNode*) );
-				aNode->children[theIndex] = _createNode( theCharacter );
+			}
+			else
+			{			
 				theNode = aNode->children[theIndex];
-				aNode->count++;
 				if( anPosition )
 					*anPosition = theIndex;
 				if( aParent )
 					*aParent = aNode;
-				
 			}
 		}
-		else
-		{			
-			theNode = aNode->children[theIndex];
+		else if( aCreate )
+		{
+			aNode->size = 4;
+			aNode->children = malloc( aNode->size*sizeof(struct trieNode) );
+			aNode->children[0] = _createNode( theKeyComponent );
+			theNode = aNode->children[0];
+			aNode->count++;
 			if( anPosition )
-				*anPosition = theIndex;
+				*anPosition = 0;
 			if( aParent )
 				*aParent = aNode;
 		}
-	}
-	else if( aCreate )
-	{
-		aNode->size = 4;
-		aNode->children = malloc( aNode->size*sizeof(struct trieNode) );
-		aNode->children[0] = _createNode( theCharacter );
-		theNode = aNode->children[0];
-		aNode->count++;
-		if( anPosition )
-			*anPosition = 0;
-		if( aParent )
-			*aParent = aNode;
-	}
 
-	anIndex++;
-	return [aString length] <= anIndex || theNode == NULL ? theNode : findNode( theNode, aString, anIndex, aCreate, aParent, anPosition );
+		anIndex++;
+		if( theNode != NULL )
+			theNode = findNode( theNode, aKey, anIndex, aCreate, aParent, anPosition, aKeyComponentFunc );
+	}
+	else
+		theNode = aNode;
+
+	return theNode;
 }
 
-BOOL removeObjectForKey( struct trieNode * aNode, NSString * aString, NSUInteger anIndex, BOOL * aFoundNode )
+BOOL removeObjectForKey( struct trieNode * aNode, id aKey, NSUInteger anIndex, BOOL * aFoundNode, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
 {
-	BOOL		theResult = NO;
+	BOOL			theResult = NO;
+	NSUInteger		theKeyComponent = aKeyComponentFunc( aKey, anIndex );
 	if( aNode->children == NULL )
 	{
-		if( [aString length] == anIndex )
+		if( theKeyComponent == NSNotFound )
 		{
 			*aFoundNode = aNode->object != nil;
 			theResult = YES;
 		}
 	}
-	else if( [aString length] > anIndex )
+	else if( theKeyComponent != NSNotFound )
 	{
-		unichar			theKey = [aString characterAtIndex:anIndex];
-		NSUInteger		theIndex = _indexForChild( aNode, theKey );
+		NSUInteger		theIndex = _indexForChild( aNode, theKeyComponent );
 		if( theIndex < aNode->count )
 		{
-			if( aNode->children[theIndex]->key == theKey )
+			if( aNode->children[theIndex]->key == theKeyComponent )
 			{
-				if( removeObjectForKey( aNode->children[theIndex], aString, anIndex+1, aFoundNode ) )
+				if( removeObjectForKey( aNode->children[theIndex], aKey, anIndex+1, aFoundNode, keyComponentForString ) )
 				{
 					aNode->count--;
 					[aNode->children[theIndex]->object release];
@@ -741,14 +753,14 @@ BOOL removeObjectForKey( struct trieNode * aNode, NSString * aString, NSUInteger
 	return theResult;
 }
 
-NSUInteger removeChild( struct trieNode * aRoot, NSString * aPrefix )
+NSUInteger removeChild( struct trieNode * aRoot, id aPrefix, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
 {
 	NSUInteger		theRemoveCount = 0;
 	NSCParameterAssert( aPrefix != nil );
 
 	NSUInteger			thePosition = 0;
 	struct trieNode		* theParent = nil,
-						* theNode = findNode( aRoot, aPrefix, 0, NO, &theParent, &thePosition );
+						* theNode = findNode( aRoot, aPrefix, 0, NO, &theParent, &thePosition, aKeyComponentFunc );
 
 	NSCParameterAssert( theParent != theNode );
 	
@@ -767,17 +779,16 @@ NSUInteger removeChild( struct trieNode * aRoot, NSString * aPrefix )
 	return theRemoveCount;
 }
 
-BOOL setObjectForKey( struct trieNode * aNode, id anObject, NSString * aKey )
+BOOL setObjectForKey( struct trieNode * aNode, id anObject, id aKey, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
 {
 	BOOL				theNewString = NO;
-	struct trieNode		* theNode = findNode( aNode, aKey, 0, YES, NULL, NULL );
+	struct trieNode		* theNode = findNode( aNode, aKey, 0, YES, NULL, NULL, aKeyComponentFunc );
 	NSCParameterAssert( theNode != NULL );
 
 	theNewString = theNode->object == nil;
 #ifdef __OBJC_GC__
 	CFRelease(theNode->object);
-	CFRetain(anObject);
-	theNode->object = anObject;
+	theNode->object = CFRetain(anObject);
 #else
 	[theNode->object release];
 	theNode->object = [anObject retain];
@@ -790,7 +801,7 @@ BOOL setObjectForKey( struct trieNode * aNode, id anObject, NSString * aKey )
 	so that the string would not have to be repeatedly reconsructed and because an automatic array would take up alot more stack space
  */
 static BOOL _recusiveForEveryObject( struct trieNode *, BOOL(*)(id,void*), void * );
-void forEveryObjectFromNode( struct trieNode * aNode, NSString * aPrefix, BOOL(*aFunc)(id,void*), void * aContext )
+void forEveryObjectFromNode( struct trieNode * aNode, BOOL(*aFunc)(id,void*), void * aContext )
 {
 	BOOL		theContinue = YES;
 
@@ -826,4 +837,19 @@ BOOL nodesAreEqual( struct trieNode * aNodeA, struct trieNode * aNodeB )
 	else
 		theEqual = NO;
 	return theEqual;
+}
+
+static struct trieNode * copyNode( struct trieNode * aNode )
+{
+	struct trieNode		* theNode = _createNode(aNode->key);
+#ifdef __OBJC_GC__
+	theNode->object = CFRetain(aNode->object);
+#else
+	theNode->object = [aNode->object retain];
+#endif
+	theNode->count = theNode->size = aNode->count;
+	theNode->children = (struct trieNode**)malloc( theNode->size * sizeof(struct trieNode) );
+	for( NSUInteger i = 0; i < theNode->count; i++ )
+		theNode->children[i] = copyNode( aNode->children[i] );
+	return theNode;
 }
