@@ -1,0 +1,3 @@
+NDTrie was developed for text completion, using the method -[NDTrie everyObjectForKeyWithPrefix:] will return every string with the given prefix. For example an NDTrie with the strings {cat, catalog, category, cow, dog} for everyObjectForKeyWithPrefix:@"cat" return the strings {cat, catalog, category}.
+The NDTrie project contains two classes NDTrie and a subclass NDMutableTrie, which work the same way Apples mutable and non-mutable classes work.
+Though initially developed to contain strings that act as the key and value using methods like -[NSMutableTrie addString:], NDTrie can also contain any object with a string key using methods like -[NSMutableTrie setObject:forKey:].

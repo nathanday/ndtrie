@@ -18,18 +18,22 @@ struct trieNode
 	__strong struct trieNode		** children;
 };
 
-static struct trieNode * findNode( struct trieNode *, id, NSUInteger, BOOL, struct trieNode **, NSUInteger *, NSUInteger (*)( id, NSUInteger ));
-static BOOL removeObjectForKey( struct trieNode *, id, NSUInteger, BOOL *, NSUInteger (*)( id, NSUInteger ) );
+static struct trieNode * findNode( struct trieNode *, id, NSUInteger, BOOL, struct trieNode **, NSUInteger *, NSUInteger (*)( id, NSUInteger, BOOL* ));
+static BOOL removeObjectForKey( struct trieNode *, id, NSUInteger, BOOL *, NSUInteger (*)( id, NSUInteger, BOOL* ) );
 static NSUInteger removeAllChildren( struct trieNode *);
-static NSUInteger removeChild( struct trieNode *, id, NSUInteger (*)( id, NSUInteger ) );
-static BOOL setObjectForKey( struct trieNode *, id, id, NSUInteger (*)( id, NSUInteger ) );
+static NSUInteger removeChild( struct trieNode *, id, NSUInteger (*)( id, NSUInteger, BOOL* ) );
+static BOOL setObjectForKey( struct trieNode *, id, id, NSUInteger (*)( id, NSUInteger, BOOL* ) );
 static void forEveryObjectFromNode( struct trieNode *, BOOL(*)(id,void*), void * );
 static BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 static struct trieNode * copyNode( struct trieNode * );
 
-static NSUInteger keyComponentForString( id anObject, NSUInteger anIndex )
+static NSUInteger keyComponentForString( id anObject, NSUInteger anIndex, BOOL * anEnd )
 {
-	return anIndex < [anObject length] ? [anObject characterAtIndex:anIndex] : NSNotFound;
+	if( anIndex < [anObject length] )
+		return [anObject characterAtIndex:anIndex];
+
+	*anEnd = YES;
+	return 0;
 }
 
 static BOOL _addTrieFunc( NSString * aString, void * aContext )
@@ -651,12 +655,13 @@ inline static NSUInteger _indexForChild( struct trieNode * aNode, NSUInteger aKe
 	Finds a node, if aCreate == YES nodes are created as needed but the final node is not set to terminal node
 	Should not return NULL if aCreate == YES
  */
-static struct trieNode * findNode( struct trieNode * aNode, id aKey, NSUInteger anIndex, BOOL aCreate, struct trieNode ** aParent, NSUInteger * anPosition, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
+static struct trieNode * findNode( struct trieNode * aNode, id aKey, NSUInteger anIndex, BOOL aCreate, struct trieNode ** aParent, NSUInteger * anPosition, NSUInteger (*aKeyComponentFunc)( id, NSUInteger, BOOL * ) )
 {
 	struct trieNode		* theNode = NULL;
-	NSUInteger			theKeyComponent = aKeyComponentFunc( aKey, anIndex );
+	BOOL				theEnd = NO;
+	NSUInteger			theKeyComponent = aKeyComponentFunc( aKey, anIndex, &theEnd );
 
-	if( theKeyComponent != NSNotFound )
+	if( !theEnd )
 	{
 		if( aNode->children != NULL )
 		{
@@ -714,19 +719,20 @@ static struct trieNode * findNode( struct trieNode * aNode, id aKey, NSUInteger 
 	return theNode;
 }
 
-BOOL removeObjectForKey( struct trieNode * aNode, id aKey, NSUInteger anIndex, BOOL * aFoundNode, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
+BOOL removeObjectForKey( struct trieNode * aNode, id aKey, NSUInteger anIndex, BOOL * aFoundNode, NSUInteger (*aKeyComponentFunc)( id, NSUInteger, BOOL * ) )
 {
 	BOOL			theResult = NO;
-	NSUInteger		theKeyComponent = aKeyComponentFunc( aKey, anIndex );
+	BOOL			theEnd = NO;
+	NSUInteger		theKeyComponent = aKeyComponentFunc( aKey, anIndex, &theEnd );
 	if( aNode->children == NULL )
 	{
-		if( theKeyComponent == NSNotFound )
+		if( theEnd )
 		{
 			*aFoundNode = aNode->object != nil;
 			theResult = YES;
 		}
 	}
-	else if( theKeyComponent != NSNotFound )
+	else if( !theEnd )
 	{
 		NSUInteger		theIndex = _indexForChild( aNode, theKeyComponent );
 		if( theIndex < aNode->count )
@@ -753,7 +759,7 @@ BOOL removeObjectForKey( struct trieNode * aNode, id aKey, NSUInteger anIndex, B
 	return theResult;
 }
 
-NSUInteger removeChild( struct trieNode * aRoot, id aPrefix, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
+NSUInteger removeChild( struct trieNode * aRoot, id aPrefix, NSUInteger (*aKeyComponentFunc)( id, NSUInteger, BOOL* ) )
 {
 	NSUInteger		theRemoveCount = 0;
 	NSCParameterAssert( aPrefix != nil );
@@ -779,7 +785,7 @@ NSUInteger removeChild( struct trieNode * aRoot, id aPrefix, NSUInteger (*aKeyCo
 	return theRemoveCount;
 }
 
-BOOL setObjectForKey( struct trieNode * aNode, id anObject, id aKey, NSUInteger (*aKeyComponentFunc)( id, NSUInteger ) )
+BOOL setObjectForKey( struct trieNode * aNode, id anObject, id aKey, NSUInteger (*aKeyComponentFunc)( id, NSUInteger, BOOL * ) )
 {
 	BOOL				theNewString = NO;
 	struct trieNode		* theNode = findNode( aNode, aKey, 0, YES, NULL, NULL, aKeyComponentFunc );

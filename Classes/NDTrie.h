@@ -362,13 +362,14 @@
 /*!
 	@method addString:
 	@abstract add a string the trie.
-	@discussion The recieve may already contain an equivelent string, in which case no change to the trie will occur.
+	@discussion This is eqivelent to calling setObject:forKey: with <tt><i>string</i></tt> as the key and object. The recieve may already contain an equivelent string, in which case no change to the trie will occur.
+	@param object <#description#>
  */
 - (void)addString:(NSString *)string;
 /*!
 	@method setObject:forKey:
-	@abstract <#abstract#>
-	@discussion <#discussion#>
+	@abstract Add an object for a key.
+	@discussion The recieve may already contain an equivelent key, in which case the object will be replaced.
 	@param object <#description#>
 	@param string <#description#>
  */
