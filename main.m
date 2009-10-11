@@ -134,6 +134,25 @@ int main (int argc, const char * argv[])
 	for( NSString * theString in theTestTrueStrings )
 		NSCAssert( ![theMutableTrie containsObjectForKey:theString], @"The Trie did contain %@", theString );
 	
+	NSMutableArray		* theDeleteArray = [theTestTrueStrings mutableCopy];
+	id			* theObjects = (id*)malloc( theTrie.count*sizeof(id) );
+	[theTrie getObjects:theObjects count:theTrie.count];
+
+	for( NSUInteger theIndex = 0; theIndex < theTrie.count; theIndex++ )
+	{
+		NSCAssert1( [theDeleteArray containsObject:theObjects[theIndex]], @"does not contain %@", theObjects[theIndex] );
+		[theDeleteArray removeObject:theObjects[theIndex]];
+	}
+	NSCAssert1( theDeleteArray.count == 0, @"contains %d objects", theDeleteArray );
+	
+	theDeleteArray = [theTestTrueStrings mutableCopy];
+	for( id theString in theTrie )
+	{
+		NSCAssert1( [theDeleteArray containsObject:theString], @"does not contain %@", theString );
+		[theDeleteArray removeObject:theString];
+	}
+	NSCAssert1( theDeleteArray.count == 0, @"contains %d objects", theDeleteArray );
+	
 	NSLog( @"\n%@", theMutableTrie );
 	[pool drain];
 	return 0;

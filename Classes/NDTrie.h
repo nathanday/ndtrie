@@ -39,7 +39,7 @@
 	@author  Nathan Day
 	@version 1.0
 */
-@interface NDTrie : NSObject <NSCopying,NSMutableCopying>
+@interface NDTrie : NSObject <NSCopying,NSMutableCopying,NSFastEnumeration>
 {
 @private
 	void		* root;
@@ -232,7 +232,7 @@
 /*!
 	@method objectForKey:
 	@abstract <#abstract#>
-	@discussion <#discussion#>
+	@discussion If the method <tt>[NDMutableTrie addString:]</tt>was used then the object returned will be equivelent the the <tt><i>key</i></tt>.
 	@param key <#description#>
 	@result <#result#>
  */
@@ -250,6 +250,15 @@
 	@param prefix The prefix to search for.
  */
 - (NSArray *)everyObjectForKeyWithPrefix:(NSString *)prefix;
+
+/*!
+	@method getObjects:count:
+	@abstract Get the objects in a c array.
+	@discussion A buffer you create and is big enough to hold <tt><i>count</i></tt> items is filed with the objects in the reciever, if the c array is not big enough to hold all of the objects within the recieve then only <tt><i>count</i></tt> objects are returned which objects are returns in inderminate.
+	@param buffer A c array to hold the returned objects.
+	@param count The number of objects the c array <tt><i>buffer</i></tt> can hold.
+ */
+- (void)getObjects:(id *)buffer count:(NSUInteger)count;
 
 /*!
 	@method isEqualToTrie:
@@ -363,15 +372,15 @@
 	@method addString:
 	@abstract add a string the trie.
 	@discussion This is eqivelent to calling setObject:forKey: with <tt><i>string</i></tt> as the key and object. The recieve may already contain an equivelent string, in which case no change to the trie will occur.
-	@param object <#description#>
+	@param object The String to add. which is used as the key and the object.
  */
 - (void)addString:(NSString *)string;
 /*!
 	@method setObject:forKey:
 	@abstract Add an object for a key.
 	@discussion The recieve may already contain an equivelent key, in which case the object will be replaced.
-	@param object <#description#>
-	@param string <#description#>
+	@param object The object to add for the given key.
+	@param string A key with must a <tt>NSString</tt> or a subclass.
  */
 - (void)setObject:(id)object forKey:(NSString *)string;
 /*!
@@ -383,10 +392,9 @@
 - (void)addStrings:(NSString *)firstString, ...;
 /*!
 	@method setObjectsAndKeys:
-	@abstract <#abstract#>
-	@discussion <#discussion#>
-	@param firstObject, <#description#>
-	@param ... <#description#>
+	@abstract Add a set of key and objects to a trie.
+	@discussion <tt>setObjectsAndKeys:</tt> set through every key object pair and adds it to the reciever, if a key is not a <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+	@param firstObject, The first object which must be followed by a key, the liist should be terminated by a <tt>nil</nil>, ifa key is <tt>nil</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
 - (void)setObjectsAndKeys:(id)firstObject, ...;
 /*!
@@ -421,9 +429,9 @@
 - (void)addArray:(NSArray *)array;
 /*!
 	@method addDictionay:
-	@abstract <#abstract#>
-	@discussion <#discussion#>
-	@param dictionary <#description#>
+	@abstract Add the contents of s dictionary to trie
+	@discussion The is equivelent to enumerating over every key in the dictionary and calling [NDMutableTrie setObject:forKey:] for every object if a key is not a <tt>NSString</tt> then the exception <ttNSInvalidArgumentException</tt> is thrown/
+	@param dictionary The dictionary for which each key/object pair is added to the reciever, every key must be if a <tt>NSString</tt> or subclass.
  */
 - (void)addDictionay:(NSDictionary *)dictionary;
 

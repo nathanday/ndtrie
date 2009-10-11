@@ -16,6 +16,7 @@ struct trieNode
 									size;
 	id								object;
 	__strong struct trieNode		** children;
+	__strong struct trieNode		* parent;
 };
 
 static struct trieNode * findNode( struct trieNode *, id, NSUInteger, BOOL, struct trieNode **, NSUInteger *, NSUInteger (*)( id, NSUInteger, BOOL* ));
@@ -26,6 +27,7 @@ static BOOL setObjectForKey( struct trieNode *, id, id, NSUInteger (*)( id, NSUI
 static void forEveryObjectFromNode( struct trieNode *, BOOL(*)(id,void*), void * );
 static BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 static struct trieNode * copyNode( struct trieNode * );
+static struct trieNode * nextNode( struct trieNode * );
 
 static NSUInteger keyComponentForString( id anObject, NSUInteger anIndex, BOOL * anEnd )
 {
@@ -317,6 +319,24 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 	return theResult;
 }
 
+struct getObjectsCountData
+{
+	NSUInteger	index,
+				count;
+	id			* objects;
+};
+static BOOL _getObjectsCountFunc( id anObject, void * aContext )
+{
+	struct getObjectsCountData		* theContent = (struct getObjectsCountData*)aContext;
+	theContent->objects[theContent->index] = [anObject copy];
+	return theContent->count > ++theContent->index;
+}
+- (void)getObjects:(id *)aBuffer count:(NSUInteger)aCount
+{
+	struct getObjectsCountData		theData = {0, aCount, aBuffer};
+	forEveryObjectFromNode( [self root], _getObjectsCountFunc, (void*)&theData );
+}
+
 - (BOOL)isEqualToTrie:(NDTrie *)anOtherTrie
 {
 	return nodesAreEqual( [self root], [anOtherTrie root] );
@@ -434,6 +454,37 @@ BOOL testFunc( id anObject, void * aContext )
 {
 	return [[NDMutableTrie allocWithZone:aZone] initWithTrie:self];
 }
+
+#ifdef __OBJC2__
+#pragma mark NSFastEnumeration
+static BOOL _countByEnumeratingWithStateFunc( id anObject, void * aContext )
+{
+	struct getObjectsCountData		* theContent = (struct getObjectsCountData*)aContext;
+	theContent->objects[theContent->index] = anObject;
+	return theContent->count > ++theContent->index;
+}
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)aState objects:(id *)aStackbuf count:(NSUInteger)aLen
+{
+	NSUInteger		theResultLength = 0;
+	if( aState->state == 0 )
+	{
+		NSUInteger						theCount = [self count];
+		struct getObjectsCountData		theData = {0, theCount, (id*)malloc( theCount*sizeof(id) )};
+		aState->itemsPtr = theData.objects;
+		forEveryObjectFromNode( [self root], _countByEnumeratingWithStateFunc, (void*)&theData );
+		theResultLength = theCount;
+		aState->state = theCount;
+		aState->mutationsPtr = (unsigned long *)aState->itemsPtr;
+
+		aStackbuf = aState->itemsPtr;
+	}
+	else
+		free( aState->itemsPtr );
+		
+
+	return theResultLength;
+}
+#endif
 
 @end
 
@@ -586,11 +637,12 @@ BOOL testFunc( id anObject, void * aContext )
 }
 @end
 
-static struct trieNode * _createNode( NSUInteger aKey )
+static struct trieNode * _createNode( NSUInteger aKey, struct trieNode * aParent )
 {
 	struct trieNode		* theNode = malloc( sizeof(struct trieNode) );
 	theNode->key = aKey;
 	theNode->children = NULL;
+	theNode->parent = aParent;
 	theNode->object = nil;
 	theNode->count = 0;
 	return theNode;
@@ -677,7 +729,7 @@ static struct trieNode * findNode( struct trieNode * aNode, id aKey, NSUInteger 
 						NSCParameterAssert( aNode->children != NULL );
 					}
 					memmove( &aNode->children[theIndex+1], &aNode->children[theIndex], (aNode->count-theIndex)*sizeof(struct trieNode*) );
-					aNode->children[theIndex] = _createNode( theKeyComponent );
+					aNode->children[theIndex] = _createNode( theKeyComponent, aNode );
 					theNode = aNode->children[theIndex];
 					aNode->count++;
 					if( anPosition )
@@ -700,7 +752,7 @@ static struct trieNode * findNode( struct trieNode * aNode, id aKey, NSUInteger 
 		{
 			aNode->size = 4;
 			aNode->children = malloc( aNode->size*sizeof(struct trieNode) );
-			aNode->children[0] = _createNode( theKeyComponent );
+			aNode->children[0] = _createNode( theKeyComponent, aNode );
 			theNode = aNode->children[0];
 			aNode->count++;
 			if( anPosition )
@@ -847,7 +899,7 @@ BOOL nodesAreEqual( struct trieNode * aNodeA, struct trieNode * aNodeB )
 
 static struct trieNode * copyNode( struct trieNode * aNode )
 {
-	struct trieNode		* theNode = _createNode(aNode->key);
+	struct trieNode		* theNode = _createNode(aNode->key, aNode );
 #ifdef __OBJC_GC__
 	theNode->object = CFRetain(aNode->object);
 #else
@@ -856,6 +908,23 @@ static struct trieNode * copyNode( struct trieNode * aNode )
 	theNode->count = theNode->size = aNode->count;
 	theNode->children = (struct trieNode**)malloc( theNode->size * sizeof(struct trieNode) );
 	for( NSUInteger i = 0; i < theNode->count; i++ )
+	{
 		theNode->children[i] = copyNode( aNode->children[i] );
+		theNode->parent = aNode;
+	}
 	return theNode;
 }
+
+static struct trieNode * nextNode( struct trieNode * aNode )
+{
+	struct trieNode		* theNode = nil;
+	if( aNode->children && aNode->count > 0 )
+		theNode = aNode->children[0];
+	else
+	{
+	}
+
+	return theNode;
+}
+
+
