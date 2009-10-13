@@ -132,7 +132,6 @@
 	@abstract Initialise a trie with the contents of an <tt>NSDictionary</tt>.
 	@discussion The trie will contain the objects and keys contained within <tt><i>dictionary</i></tt>.
 	@param dictionary An dictionary of objects and keys, if a key within the dictionary is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
-	@result <#result#>
  */
 - (id)initWithDictionary:(NSDictionary *)dictionary;
 /*!
@@ -190,25 +189,24 @@
 /*!
 	@method initWithStrings:arguments:
 	@abstract Initialise a trie with a <tt>va_list</tt> of <tt>NSString</tt>s
-	@discussion This method is used by the varable nubmer of aramgent methods, The order of th strings is ignored, duplicates will be ignored.
+	@discussion This method is used by the varable number of string argument methods, The order of th strings is ignored, duplicates will be ignored.
 	@param firstString The first string.
 	@param arguments A va_list for the rest of the strings, the list needs to be nil terminated.
  */
 - (id)initWithStrings:(NSString *)firstString arguments:(va_list)arguments;
 /*!
 	@method initWithObjectsAndKeys:arguments:
-	@abstract <#abstract#>
-	@discussion <#discussion#>
-	@param firstObject <#description#>
-	@param arguments <#description#>
-	@result <#result#>
+	@abstract Initialise a trie with a <tt>va_list</tt> of objects and keys
+	@discussion This method is used by the varable number of object and keys arguments methods, The order of th strings is ignored, duplicates will be ignored.
+	@param firstObject first object in a list of object and keys.
+	@param arguments A va_list for the rest of the objects and keys, the list needs to be nil terminated.
  */
 - (id)initWithObjectsAndKeys:(id)firstObject arguments:(va_list)arguments;
 
 /*!
 	@method count
 	@abstract get the number of strings with a trie.
-	@discussion Returns the number of strings cntained within th receiver, duplicate strings added to a trie will only count as one entry.
+	@discussion Returns the number of objects contained within th receiver.
  */
 - (NSUInteger)count;
 
@@ -231,10 +229,10 @@
 
 /*!
 	@method objectForKey:
-	@abstract <#abstract#>
+	@abstract Find an object for a given key.
 	@discussion If the method <tt>[NDMutableTrie addString:]</tt>was used then the object returned will be equivelent the the <tt><i>key</i></tt>.
-	@param key <#description#>
-	@result <#result#>
+	@param key The key to search for, unlike <tt>everyObjectForKeyWithPrefix:</tt> the key is a complete match.
+	@result The found object or nil if no objects is found.
  */
 - (id)objectForKey:(NSString *)key;
 /*!
@@ -259,6 +257,23 @@
 	@param count The number of objects the c array <tt><i>buffer</i></tt> can hold.
  */
 - (void)getObjects:(id *)buffer count:(NSUInteger)count;
+
+/*!
+	@method objectEnumerator
+	@abstract Returns an enumerator object that lets you access each object in the receiver.
+	@discussion Returns an enumerator object that lets you access each object in the receiver, in an indeterminate order.
+	@result An enumerator object that lets you access each object in the receiver.
+ */
+- (NSEnumerator *)objectEnumerator;
+
+/*!
+	@method objectEnumeratorForKeyWithPrefix:
+	@abstract Returns an enumerator object that lets you access each object in the receiver.
+	@discussion Returns an enumerator object that lets you access each object in the receiver whose key has the prefix <tt><i>prefix</i></tt>, in an indeterminate order.
+	@param prefix The prefix to search for.
+	@result An enumerator object that lets you access each object in the receiver.
+ */
+- (NSEnumerator *)objectEnumeratorForKeyWithPrefix:(NSString *)prefix;
 
 /*!
 	@method isEqualToTrie:
@@ -407,11 +422,11 @@
 - (void)addStrings:(NSString **)strings count:(NSUInteger)count;
 /*!
 	@method setObjects:forKeys:count:
-	@abstract <#abstract#>
-	@discussion <#discussion#>
-	@param objects <#description#>
-	@param keys <#description#>
-	@param count <#description#>
+	@abstract add a c array of objects and keys to a trie/
+	@discussion Each object in the c array <tt><i>objects</i></tt> must have a key in the c array <tt><i>keys</i></tt>, there must be <tt><i>count</i></tt> or more objects and keys in each c array, if there are dupicate keys the only on object for the corresponding keys is used.
+	@param objects A c array of objects
+	@param keys A c array of keys, where each key belongs to the object with the same index in <tt><i>objects</i></tt>.
+	@param count The number of objects and keys in the c arrays, there may be more but there can not be less.
  */
 - (void)setObjects:(id *)objects forKeys:(NSString **)keys count:(NSUInteger)count;
 /*!

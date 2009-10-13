@@ -19,6 +19,14 @@ struct trieNode
 	__strong struct trieNode		* parent;
 };
 
+struct getObjectsCountData
+{
+	NSUInteger						index,
+									count;
+	enum { assign, retain, copy }	assignMethod;
+	id								* objects;
+};
+
 static struct trieNode * findNode( struct trieNode *, id, NSUInteger, BOOL, struct trieNode **, NSUInteger *, NSUInteger (*)( id, NSUInteger, BOOL* ));
 static BOOL removeObjectForKey( struct trieNode *, id, NSUInteger, BOOL *, NSUInteger (*)( id, NSUInteger, BOOL* ) );
 static NSUInteger removeAllChildren( struct trieNode *);
@@ -27,7 +35,20 @@ static BOOL setObjectForKey( struct trieNode *, id, id, NSUInteger (*)( id, NSUI
 static void forEveryObjectFromNode( struct trieNode *, BOOL(*)(id,void*), void * );
 static BOOL nodesAreEqual( struct trieNode *, struct trieNode * );
 static struct trieNode * copyNode( struct trieNode * );
-static struct trieNode * nextNode( struct trieNode * );
+//static struct trieNode * nextNode( struct trieNode * );
+static BOOL getObjectsFunc( id, void * );
+
+@interface NDTrieEnumerator : NSEnumerator
+{
+	id			* everyObject;
+	NSUInteger	index,
+				count;
+}
+
++ (id)trieEnumeratorWithTrie:(NDTrie *)trie node:(struct trieNode*)node;
+- (id)initWithTrie:(NDTrie *)trie node:(struct trieNode*)node;
+
+@end
 
 static NSUInteger keyComponentForString( id anObject, NSUInteger anIndex, BOOL * anEnd )
 {
@@ -319,22 +340,24 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 	return theResult;
 }
 
-struct getObjectsCountData
-{
-	NSUInteger	index,
-				count;
-	id			* objects;
-};
-static BOOL _getObjectsCountFunc( id anObject, void * aContext )
-{
-	struct getObjectsCountData		* theContent = (struct getObjectsCountData*)aContext;
-	theContent->objects[theContent->index] = [anObject copy];
-	return theContent->count > ++theContent->index;
-}
 - (void)getObjects:(id *)aBuffer count:(NSUInteger)aCount
 {
-	struct getObjectsCountData		theData = {0, aCount, aBuffer};
-	forEveryObjectFromNode( [self root], _getObjectsCountFunc, (void*)&theData );
+	struct getObjectsCountData		theData = {0, aCount, copy, aBuffer};
+	forEveryObjectFromNode( [self root], getObjectsFunc, (void*)&theData );
+}
+
+- (NSEnumerator *)objectEnumerator
+{
+	return [NDTrieEnumerator trieEnumeratorWithTrie:self node:[self root]];
+}
+
+- (NSEnumerator *)objectEnumeratorForKeyWithPrefix:(NSString *)aPrefix
+{
+	struct trieNode		* theNode = [self root];
+	if( aPrefix != nil && [aPrefix length] > 0 )
+		theNode = findNode( theNode, aPrefix, 0, NO, NULL, NULL, keyComponentForString );
+
+	return [NDTrieEnumerator trieEnumeratorWithTrie:self node:theNode];
 }
 
 - (BOOL)isEqualToTrie:(NDTrie *)anOtherTrie
@@ -457,21 +480,25 @@ BOOL testFunc( id anObject, void * aContext )
 
 #ifdef __OBJC2__
 #pragma mark NSFastEnumeration
-static BOOL _countByEnumeratingWithStateFunc( id anObject, void * aContext )
-{
-	struct getObjectsCountData		* theContent = (struct getObjectsCountData*)aContext;
-	theContent->objects[theContent->index] = anObject;
-	return theContent->count > ++theContent->index;
-}
+/*
+	Implement fast enumeration by retrieving every object in a c array, this is expensive memory wise but is quicker,
+	this may not be a suitable solution on the iPhone where memory is more restrictive, could perhaps use an alternative
+	implemention for the iPhone or maybe even change the method depending on the trie size.
+ */
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)aState objects:(id *)aStackbuf count:(NSUInteger)aLen
 {
 	NSUInteger		theResultLength = 0;
 	if( aState->state == 0 )
 	{
 		NSUInteger						theCount = [self count];
-		struct getObjectsCountData		theData = {0, theCount, (id*)malloc( theCount*sizeof(id) )};
+#ifdef __OBJC_GC__
+#warning Fast enumataion has not been tested with garbage collxtion
+		struct getObjectsCountData		theData = {0, theCount, assign, (id*)NSAllocateCollectable( theCount*sizeof(id), NSScannedOption )};
+#else
+		struct getObjectsCountData		theData = {0, theCount, assign, (id*)malloc( theCount*sizeof(id) )};
+#endif
 		aState->itemsPtr = theData.objects;
-		forEveryObjectFromNode( [self root], _countByEnumeratingWithStateFunc, (void*)&theData );
+		forEveryObjectFromNode( [self root], getObjectsFunc, (void*)&theData );
 		theResultLength = theCount;
 		aState->state = theCount;
 		aState->mutationsPtr = (unsigned long *)aState->itemsPtr;
@@ -636,6 +663,76 @@ static BOOL _countByEnumeratingWithStateFunc( id anObject, void * aContext )
 	return (struct trieNode*)root;
 }
 @end
+
+#ifdef __OBJC_GC__
+#warning NDTrieEnumerator has not been tested with garbage collection
+#endif
+@implementation NDTrieEnumerator
+
++ (id)trieEnumeratorWithTrie:(NDTrie *)trie node:(struct trieNode*)aNode
+{
+	return [[[self alloc] initWithTrie:(NDTrie *)trie node:aNode] autorelease];
+}
+
+- (id)initWithTrie:(NDTrie *)aTrie node:(struct trieNode*)aNode
+{
+	if( (self = [self init]) != nil )
+	{
+		struct getObjectsCountData		theData = {0, 0, retain, NULL};
+		count = [aTrie count];
+#ifdef __OBJC_GC__
+		everyObject = (id*)NSAllocateCollectable( count*sizeof(id), NSScannedOption );
+#else
+		everyObject = (id*)malloc( count*sizeof(id) );
+#endif
+		index = 0;
+		theData.count = count;
+		theData.objects = everyObject;
+		forEveryObjectFromNode( aNode, getObjectsFunc, (void*)&theData );
+		count = theData.index;
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	for( NSUInteger i = 0; i < count; i++ )
+	{
+#ifdef __OBJC_GC__
+		CFRelease(everyObject[i]);
+#else
+		[everyObject[i] release];
+#endif
+	}
+	free( everyObject );
+	[super dealloc];
+}
+
+- (id)nextObject
+{
+	return index < count ? everyObject[index++] : nil;
+}
+
+- (NSArray *)allObjects
+{
+	return [NSArray arrayWithObjects:everyObject+index count:count-index];
+}
+
+#pragma mark NSFastEnumeration
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)aState objects:(id *)aStackbuf count:(NSUInteger)aLen
+{
+	NSUInteger		theCount = 0;
+	if( aState->state == 0 )
+	{
+		aState->itemsPtr = everyObject+index;
+		aState->state = theCount = count - index;
+		aState->mutationsPtr = (unsigned long *)aState->itemsPtr;
+	}
+	return theCount;
+}
+
+@end
+
 
 static struct trieNode * _createNode( NSUInteger aKey, struct trieNode * aParent )
 {
@@ -915,6 +1012,29 @@ static struct trieNode * copyNode( struct trieNode * aNode )
 	return theNode;
 }
 
+static BOOL getObjectsFunc( id anObject, void * aContext )
+{
+	struct getObjectsCountData		* theContent = (struct getObjectsCountData*)aContext;
+	switch( theContent->assignMethod )
+	{
+	case assign:
+		theContent->objects[theContent->index] = anObject;
+		break;
+	case retain:
+#ifdef __OBJC_GC__
+		theContent->objects[theContent->index] = CFRetain(anObject);
+#else
+		theContent->objects[theContent->index] = [anObject retain];
+#endif
+		break;
+	case copy:
+		theContent->objects[theContent->index] = [anObject copy];
+		break;
+	}
+	return theContent->count > ++theContent->index;
+}
+
+#if 0
 static struct trieNode * nextNode( struct trieNode * aNode )
 {
 	struct trieNode		* theNode = nil;
@@ -926,5 +1046,6 @@ static struct trieNode * nextNode( struct trieNode * aNode )
 
 	return theNode;
 }
+#endif
 
 

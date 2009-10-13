@@ -153,6 +153,43 @@ int main (int argc, const char * argv[])
 	}
 	NSCAssert1( theDeleteArray.count == 0, @"contains %d objects", theDeleteArray );
 	
+	NSString		* theString = nil;
+	NSEnumerator	* theTrieEnumerator = theTrie.objectEnumerator;
+	theDeleteArray = [theTestTrueStrings mutableCopy];
+	while( (theString = theTrieEnumerator.nextObject) != nil )
+	{
+		NSCAssert1( [theDeleteArray containsObject:theString], @"does not contain %@", theString );
+		[theDeleteArray removeObject:theString];
+	}
+	NSCAssert1( theDeleteArray.count == 0, @"contains %d objects", theDeleteArray );
+
+	theTrieEnumerator = theTrie.objectEnumerator;
+	theDeleteArray = [theTestTrueStrings mutableCopy];
+	for( theString in theTrieEnumerator )
+	{
+		NSCAssert1( [theDeleteArray containsObject:theString], @"does not contain %@", theString );
+		[theDeleteArray removeObject:theString];
+	}
+	NSCAssert1( theDeleteArray.count == 0, @"contains %d objects", theDeleteArray );
+
+	theTrieEnumerator = [theTrie objectEnumeratorForKeyWithPrefix:@"cat"];
+	theDeleteArray = [theTestTrueStrings mutableCopy];
+	while( (theString = theTrieEnumerator.nextObject) != nil )
+	{
+		NSCAssert1( [theDeleteArray containsObject:theString], @"does not contain %@", theString );
+		[theDeleteArray removeObject:theString];
+	}
+	NSCAssert1( theDeleteArray.count == 4, @"contains %d objects", theDeleteArray );
+	
+	theTrieEnumerator = [theTrie objectEnumeratorForKeyWithPrefix:@"cat"];
+	theDeleteArray = [theTestTrueStrings mutableCopy];
+	for( theString in theTrieEnumerator )
+	{
+		NSCAssert1( [theDeleteArray containsObject:theString], @"does not contain %@", theString );
+		[theDeleteArray removeObject:theString];
+	}
+	NSCAssert1( theDeleteArray.count == 4, @"contains %d objects", theDeleteArray );
+	
 	NSLog( @"\n%@", theMutableTrie );
 	[pool drain];
 	return 0;
