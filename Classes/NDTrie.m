@@ -470,7 +470,7 @@ BOOL testFunc( id anObject, void * aContext )
 
 - (id)copyWithZone:(NSZone *)aZone
 {
-	return [self isMemberOfClass:[NDTrie class]] ? [self retain] : [[NDTrie allocWithZone:aZone] initWithTrie:self];
+	return [self retain];
 }
 
 - (id)mutableCopyWithZone:(NSZone *)aZone
@@ -653,6 +653,11 @@ BOOL testFunc( id anObject, void * aContext )
 	}
 	else
 		removeAllChildren( [self root] );
+}
+
+- (id)copyWithZone:(NSZone *)aZone
+{
+	return [[NDTrie allocWithZone:aZone] initWithTrie:self];
 }
 
 @end
