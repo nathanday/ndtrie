@@ -72,25 +72,10 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 
 @implementation NDTrie
 
-+ (id)trie
-{
-	return [[[self alloc] init] autorelease];
-}
-
-+ (id)trieWithArray:(NSArray *)anArray
-{
-	return [[[self alloc] initWithArray:anArray] autorelease];
-}
-
-+ (id)trieWithDictionary:(NSDictionary *)aDictionary
-{
-	return [[[self alloc] initWithDictionary:aDictionary] autorelease];
-}
-
-+ (id)trieWithTrie:(NDTrie *)anAnotherTrie
-{
-	return [[[self alloc] initWithTrie:anAnotherTrie] autorelease];
-}
++ (id)trie { return [[[self alloc] init] autorelease]; }
++ (id)trieWithArray:(NSArray *)anArray { return [[[self alloc] initWithArray:anArray] autorelease]; }
++ (id)trieWithDictionary:(NSDictionary *)aDictionary { return [[[self alloc] initWithDictionary:aDictionary] autorelease]; }
++ (id)trieWithTrie:(NDTrie *)anAnotherTrie { return [[[self alloc] initWithTrie:anAnotherTrie] autorelease]; }
 
 + (id)trieWithStrings:(NSString *)aFirstString, ...
 {
@@ -112,21 +97,12 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 	return theResult;
 }
 
-+ (id)trieWithContentsOfFile:(NSString *)aPath
-{
-	return [[[self alloc] initWithContentsOfFile:aPath] autorelease];
-}
-
-+ (id)trieWithContentsOfURL:(NSURL *)aURL
-{
-	return [[[self alloc] initWithContentsOfURL:aURL] autorelease];
-}
-
++ (id)trieWithContentsOfFile:(NSString *)aPath { return [[[self alloc] initWithContentsOfFile:aPath] autorelease]; }
++ (id)trieWithContentsOfURL:(NSURL *)aURL { return [[[self alloc] initWithContentsOfURL:aURL] autorelease]; }
 + (id)trieWithStrings:(const NSString **)aStrings count:(NSUInteger)aCount
 {
 	return [[[self alloc] initWithObjects:aStrings forKeys:aStrings count:aCount] autorelease];
 }
-
 + (id)trieWithObjects:(id *)anObjects forKeys:(id *)aKeys count:(NSUInteger)aCount
 {
 	return [[[self alloc] initWithObjects:anObjects forKeys:aKeys count:aCount] autorelease];
@@ -143,22 +119,18 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 {
 	if( (self = [self init]) != nil )
 	{
-#if __OBJC2__
+#ifdef NDFastEnumerationAvailable
 		for( NSString * theString in anArray )
 		{
-			if( ![theString isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
-			count += setObjectForKey( [self root], theString, theString, keyComponentForString );
-		}
 #else
 		for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
 		{
 			NSString		* theString = [anArray objectAtIndex:i];
+#endif
 			if( ![theString isKindOfClass:[NSString class]] )
 				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
-			count += setObjectForKey( [self root], theString, theString );
+			count += setObjectForKey( [self root], theString, theString, keyComponentForString );
 		}
-#endif
 	}
 	return self;
 }
@@ -167,23 +139,19 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 {
 	if( (self = [self init]) != nil )
 	{
-#if __OBJC2__
+#ifdef NDFastEnumerationAvailable
 		for( NSString * theKey in aDictionary )
 		{
-			if( ![theKey isKindOfClass:[NSString class]] )
-				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
-			count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey, keyComponentForString );
-		}
 #else
 		NSArray		* theKeysArray = [aDictionary allKeys];
 		for( NSUInteger i = 0, c = [theKeysArray count]; i < c; i++ )
 		{
 			NSString		* theKey = [theKeysArray objectAtIndex:i];
+#endif
 			if( ![theKey isKindOfClass:[NSString class]] )
 				@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
-			count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey );
+			count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey, keyComponentForString );
 		}
-#endif
 	}
 	return self;
 }
@@ -216,20 +184,9 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 	return theResult;
 }
 
-- (id)initWithContentsOfFile:(NSString *)aPath
-{
-	return [self initWithArray:[NSArray arrayWithContentsOfFile:aPath]];
-}
-
-- (id)initWithContentsOfURL:(NSURL *)aURL
-{
-	return [self initWithArray:[NSArray arrayWithContentsOfURL:aURL]];
-}
-
-- (id)initWithStrings:(NSString **)aStrings count:(NSUInteger)aCount
-{
-	return [self initWithObjects:aStrings forKeys:aStrings count:aCount];
-}
+- (id)initWithContentsOfFile:(NSString *)aPath { return [self initWithArray:[NSArray arrayWithContentsOfFile:aPath]]; }
+- (id)initWithContentsOfURL:(NSURL *)aURL { return [self initWithArray:[NSArray arrayWithContentsOfURL:aURL]]; }
+- (id)initWithStrings:(NSString **)aStrings count:(NSUInteger)aCount { return [self initWithObjects:aStrings forKeys:aStrings count:aCount]; }
 
 - (id)initWithObjects:(id *)anObjects forKeys:(NSString **)aKeys count:(NSUInteger)aCount
 {
@@ -294,10 +251,7 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 	[super finalize];
 }
 
-- (NSUInteger)count
-{
-	return count;
-}
+- (NSUInteger)count { return count; }
 
 - (BOOL)containsObjectForKey:(NSString *)aString
 {
@@ -346,10 +300,7 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 	forEveryObjectFromNode( [self root], getObjectsFunc, (void*)&theData );
 }
 
-- (NSEnumerator *)objectEnumerator
-{
-	return [NDTrieEnumerator trieEnumeratorWithTrie:self node:[self root]];
-}
+- (NSEnumerator *)objectEnumerator { return [NDTrieEnumerator trieEnumeratorWithTrie:self node:[self root]]; }
 
 - (NSEnumerator *)objectEnumeratorForKeyWithPrefix:(NSString *)aPrefix
 {
@@ -360,16 +311,8 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 	return [NDTrieEnumerator trieEnumeratorWithTrie:self node:theNode];
 }
 
-- (BOOL)isEqualToTrie:(NDTrie *)anOtherTrie
-{
-	return nodesAreEqual( [self root], [anOtherTrie root] );
-}
-
-- (BOOL)isEqual:(id)anObject
-{
-	return [anObject isKindOfClass:[NDTrie class]] ? [self isEqualToTrie:anObject] : NO;
-}
-
+- (BOOL)isEqualToTrie:(NDTrie *)anOtherTrie { return nodesAreEqual( [self root], [anOtherTrie root] ); }
+- (BOOL)isEqual:(id)anObject { return [anObject isKindOfClass:[NDTrie class]] ? [self isEqualToTrie:anObject] : NO; }
 - (void)enumerateObjectsUsingFunction:(BOOL (*)(NSString *))aFunc
 {
 	forEveryObjectFromNode( [self root], (BOOL(*)(NSString*,void*))aFunc, NULL );
@@ -398,15 +341,8 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 		forEveryObjectFromNode( theNode, aFunc, aContext );
 }
 
-- (BOOL)writeToFile:(NSString *)aPath atomically:(BOOL)anAtomically
-{
-	return [[self everyObject] writeToFile:aPath atomically:anAtomically];
-}
-
-- (BOOL)writeToURL:(NSURL *)aURL atomically:(BOOL)anAtomically
-{
-	return [[self everyObject] writeToURL:aURL atomically:anAtomically];
-}
+- (BOOL)writeToFile:(NSString *)aPath atomically:(BOOL)anAtomically { return [[self everyObject] writeToFile:aPath atomically:anAtomically]; }
+- (BOOL)writeToURL:(NSURL *)aURL atomically:(BOOL)anAtomically { return [[self everyObject] writeToURL:aURL atomically:anAtomically]; }
 
 #ifdef NS_BLOCKS_AVAILABLE
 BOOL enumerateFunc( NSString * aString, void * aContext )
@@ -416,10 +352,7 @@ BOOL enumerateFunc( NSString * aString, void * aContext )
 	theBlock( aString, &theStop );
 	return !theStop;
 }
-- (void)enumerateObjectsUsingBlock:(void (^)(NSString *, BOOL *))aBlock
-{
-	forEveryObjectFromNode( [self root], enumerateFunc, (void*)aBlock );
-}
+- (void)enumerateObjectsUsingBlock:(void (^)(NSString *, BOOL *))aBlock { forEveryObjectFromNode( [self root], enumerateFunc, (void*)aBlock ); }
 
 - (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingBlock:(void (^)(NSString * string, BOOL *stop))aBlock
 {
@@ -463,22 +396,11 @@ BOOL testFunc( id anObject, void * aContext )
 
 #endif
 
-- (NSString *)description
-{
-	return [[self everyObject] description];
-}
+- (NSString *)description { return [[self everyObject] description]; }
+- (id)copyWithZone:(NSZone *)aZone { return [self retain]; }
+- (id)mutableCopyWithZone:(NSZone *)aZone { return [[NDMutableTrie allocWithZone:aZone] initWithTrie:self]; }
 
-- (id)copyWithZone:(NSZone *)aZone
-{
-	return [self retain];
-}
-
-- (id)mutableCopyWithZone:(NSZone *)aZone
-{
-	return [[NDMutableTrie allocWithZone:aZone] initWithTrie:self];
-}
-
-#ifdef __OBJC2__
+#ifdef NDFastEnumerationAvailable
 #pragma mark NSFastEnumeration
 /*
 	Implement fast enumeration by retrieving every object in a c array, this is expensive memory wise but is quicker,
@@ -517,10 +439,7 @@ BOOL testFunc( id anObject, void * aContext )
 
 @implementation NDMutableTrie
 
-- (void)addString:(NSString *)aString
-{
-	[self setObject:aString forKey:aString];
-}
+- (void)addString:(NSString *)aString { [self setObject:aString forKey:aString]; }
 
 - (void)setObject:(id)anObject forKey:(NSString *)aString;
 {
@@ -580,50 +499,39 @@ BOOL testFunc( id anObject, void * aContext )
 		count += setObjectForKey( [self root], anObjects[i], aKeys[i], keyComponentForString );
 }
 
-- (void)addTrie:(NDTrie *)aTrie
-{
-	[aTrie enumerateObjectsUsingFunction:_addTrieFunc context:(void*)self];
-}
+- (void)addTrie:(NDTrie *)aTrie { [aTrie enumerateObjectsUsingFunction:_addTrieFunc context:(void*)self]; }
 
 - (void)addArray:(NSArray *)anArray
 {
-#if __OBJC2__
+#ifdef NDFastEnumerationAvailable
 	for( NSString * theString in anArray )
 	{
-		if( ![theString isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
-		count += setObjectForKey( [self root], theString, theString, keyComponentForString );
-	}
 #else
 	for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
 	{
 		NSString	* theString = [anArray objectAtIndex:i];
+#endif
 		if( ![theString isKindOfClass:[NSString class]] )
 			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theString class]] userInfo:nil];
-		count += setObjectForKey( [self root], theString, theString );
+		count += setObjectForKey( [self root], theString, theString, keyComponentForString );
 	}
-#endif
 }
 
 - (void)addDictionay:(NSDictionary *)aDictionary
 {
 	NSArray		* theKeysArray = [aDictionary allKeys];
-#if __OBJC2__
+#ifdef NDFastEnumerationAvailable
 	for( NSString * theKey in theKeysArray )
 	{
-		if( ![theKey isKindOfClass:[NSString class]] )
-			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
-		count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey, keyComponentForString );
-	}
 #else
 	for( NSUInteger i = 0, c = [theKeysArray count]; i < c; i++ )
 	{
 		NSString	* theKey = [theKeysArray objectAtIndex:i];
+#endif
 		if( ![theKey isKindOfClass:[NSString class]] )
 			@throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"An attempt was made to add and object of class $@ to a NDTrie", [theKey class]] userInfo:nil];
-		count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey );
+		count += setObjectForKey( [self root], [aDictionary objectForKey:theKey], theKey, keyComponentForString );
 	}
-#endif
 }
 	 
 - (void)removeObjectForKey:(NSString *)aString
@@ -655,18 +563,12 @@ BOOL testFunc( id anObject, void * aContext )
 		removeAllChildren( [self root] );
 }
 
-- (id)copyWithZone:(NSZone *)aZone
-{
-	return [[NDTrie allocWithZone:aZone] initWithTrie:self];
-}
+- (id)copyWithZone:(NSZone *)aZone { return [[NDTrie allocWithZone:aZone] initWithTrie:self]; }
 
 @end
 
 @implementation NDTrie (Private)
-- (struct trieNode*)root
-{
-	return (struct trieNode*)root;
-}
+- (struct trieNode*)root { return (struct trieNode*)root; }
 @end
 
 #ifdef __OBJC_GC__
@@ -674,10 +576,7 @@ BOOL testFunc( id anObject, void * aContext )
 #endif
 @implementation NDTrieEnumerator
 
-+ (id)trieEnumeratorWithTrie:(NDTrie *)trie node:(struct trieNode*)aNode
-{
-	return [[[self alloc] initWithTrie:(NDTrie *)trie node:aNode] autorelease];
-}
++ (id)trieEnumeratorWithTrie:(NDTrie *)trie node:(struct trieNode*)aNode { return [[[self alloc] initWithTrie:(NDTrie *)trie node:aNode] autorelease]; }
 
 - (id)initWithTrie:(NDTrie *)aTrie node:(struct trieNode*)aNode
 {
@@ -713,15 +612,8 @@ BOOL testFunc( id anObject, void * aContext )
 	[super dealloc];
 }
 
-- (id)nextObject
-{
-	return index < count ? everyObject[index++] : nil;
-}
-
-- (NSArray *)allObjects
-{
-	return [NSArray arrayWithObjects:everyObject+index count:count-index];
-}
+- (id)nextObject { return index < count ? everyObject[index++] : nil; }
+- (NSArray *)allObjects { return [NSArray arrayWithObjects:everyObject+index count:count-index]; }
 
 #pragma mark NSFastEnumeration
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)aState objects:(id *)aStackbuf count:(NSUInteger)aLen

@@ -32,6 +32,11 @@
 
 #import <Foundation/Foundation.h>
 
+/* the macro __OBJC2__ test for the modern runtime not Objective-C 2 language features */
+#if TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#define NDFastEnumerationAvailable
+#endif
+
 /*!
 	@class NDTrie
 	@abstract An immutable trie implemented in Objective-C
@@ -39,7 +44,11 @@
 	@author  Nathan Day
 	@version 1.0
 */
+#ifdef NDFastEnumerationAvailable
 @interface NDTrie : NSObject <NSCopying,NSMutableCopying,NSFastEnumeration>
+#else
+@interface NDTrie : NSObject <NSCopying,NSMutableCopying>
+#endif
 {
 @private
 	void		* root;
