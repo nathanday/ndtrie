@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "NDTrie.h"
 
-NSString		* kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/NDTrieTest/sample_file.plist";
+NSString		* kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/NDTrieTest/sample_file_xml.plist";
 
 int main (int argc, const char * argv[])
 {

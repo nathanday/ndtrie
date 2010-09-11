@@ -9,6 +9,10 @@
 #import "NDTrie.h"
 #include <string.h>
 
+static NSString		* const kPListPListElementName = @"plist",
+					* const kArrayPListElementName = @"array",
+					* const kStringPListElementName = @"string";
+
 struct trieNode
 {
 	NSUInteger						key;
@@ -70,6 +74,26 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 - (struct trieNode*)root;
 @end
 
+enum NDTriePListElelemt
+{
+	NDTriePListElelemtNone,
+	NDTriePListElelemtArray,
+	NDTriePListElelemtDictionary
+};
+
+@interface NDTrieBuilder : NSObject <NSXMLParserDelegate>
+{
+@private
+	NSMutableString				* currentString;
+	enum NDTriePListElelemt		foundRootElement;
+	struct trieNode				* root;
+	NSUInteger					count;
+}
+- (id)initWithTrieRoot:(struct trieNode*)root;
+- (BOOL)parseContentsOfURL:(NSURL *)url;
+- (NSUInteger)count;
+@end
+
 @implementation NDTrie
 
 + (id)trie { return [[[self alloc] init] autorelease]; }
@@ -121,10 +145,12 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 	{
 #ifdef NDFastEnumerationAvailable
 		for( NSString * theString in anArray )
-		{
 #else
 		for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
+#endif
+
 		{
+#ifndef NDFastEnumerationAvailable
 			NSString		* theString = [anArray objectAtIndex:i];
 #endif
 			if( ![theString isKindOfClass:[NSString class]] )
@@ -139,13 +165,14 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 {
 	if( (self = [self init]) != nil )
 	{
-#ifdef NDFastEnumerationAvailable
-		for( NSString * theKey in aDictionary )
-		{
-#else
+#ifndef NDFastEnumerationAvailable
 		NSArray		* theKeysArray = [aDictionary allKeys];
 		for( NSUInteger i = 0, c = [theKeysArray count]; i < c; i++ )
+#else
+		for( NSString * theKey in aDictionary )
+#endif
 		{
+#ifndef NDFastEnumerationAvailable
 			NSString		* theKey = [theKeysArray objectAtIndex:i];
 #endif
 			if( ![theKey isKindOfClass:[NSString class]] )
@@ -162,7 +189,6 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 		root = copyNode( [anAnotherTrie root] );
 	return self;
 }
-
 
 - (id)initWithStrings:(NSString *)aFirstString, ...
 {
@@ -184,8 +210,26 @@ static BOOL _addTrieFunc( NSString * aString, void * aContext )
 	return theResult;
 }
 
-- (id)initWithContentsOfFile:(NSString *)aPath { return [self initWithArray:[NSArray arrayWithContentsOfFile:aPath]]; }
-- (id)initWithContentsOfURL:(NSURL *)aURL { return [self initWithArray:[NSArray arrayWithContentsOfURL:aURL]]; }
+- (id)initWithContentsOfFile:(NSString *)aPath { return [self initWithContentsOfURL:[NSURL fileURLWithPath:aPath]]; }
+- (id)initWithContentsOfURL:(NSURL *)aURL
+{
+	if( (self = [self init]) != nil )
+	{
+		NDTrieBuilder		* theBuilder = [[NDTrieBuilder alloc] initWithTrieRoot:[self root]];
+		BOOL				theResult = [theBuilder parseContentsOfURL:aURL];
+		if( theResult )
+			count = [theBuilder count];
+		else
+		{
+			NSArray		* theArray = [[NSArray alloc] initWithContentsOfURL:aURL];
+			self = [self initWithArray:theArray];
+			[theArray release];
+		}
+		[theBuilder release];
+	}
+	return self;
+}
+
 - (id)initWithStrings:(NSString **)aStrings count:(NSUInteger)aCount { return [self initWithObjects:aStrings forKeys:aStrings count:aCount]; }
 
 - (id)initWithObjects:(id *)anObjects forKeys:(NSString **)aKeys count:(NSUInteger)aCount
@@ -505,10 +549,11 @@ BOOL testFunc( id anObject, void * aContext )
 {
 #ifdef NDFastEnumerationAvailable
 	for( NSString * theString in anArray )
-	{
 #else
 	for( NSUInteger i = 0, c = [anArray count]; i < c; i++ )
+#endif
 	{
+#ifndef NDFastEnumerationAvailable
 		NSString	* theString = [anArray objectAtIndex:i];
 #endif
 		if( ![theString isKindOfClass:[NSString class]] )
@@ -522,10 +567,11 @@ BOOL testFunc( id anObject, void * aContext )
 	NSArray		* theKeysArray = [aDictionary allKeys];
 #ifdef NDFastEnumerationAvailable
 	for( NSString * theKey in theKeysArray )
-	{
 #else
 	for( NSUInteger i = 0, c = [theKeysArray count]; i < c; i++ )
+#endif
 	{
+#ifndef NDFastEnumerationAvailable
 		NSString	* theKey = [theKeysArray objectAtIndex:i];
 #endif
 		if( ![theKey isKindOfClass:[NSString class]] )
@@ -630,7 +676,75 @@ BOOL testFunc( id anObject, void * aContext )
 
 @end
 
+@implementation NDTrieBuilder
+- (id)initWithTrieRoot:(struct trieNode*)aRoot
+{
+	if( (self = [super init]) != nil )
+		root = aRoot;
+	return self;
+}
+- (void)dealloc
+{
+	[currentString release];
+    [super dealloc];
+}
 
+- (BOOL)parseContentsOfURL:(NSURL *)aURL
+{
+	NSXMLParser		* theParser = [[NSXMLParser alloc] initWithContentsOfURL:aURL];
+	BOOL			theResult = NO;
+	[theParser setDelegate:self];
+	[theParser setShouldProcessNamespaces:NO];
+	[theParser setShouldReportNamespacePrefixes:NO];
+	[theParser setShouldResolveExternalEntities:NO];
+	if( (theResult = [theParser parse])== NO )
+		NSLog( @"%@", [theParser parserError] );
+	return theResult;
+}
+
+- (NSUInteger)count { return count; }
+
+#pragma mark NSXMLParserDelegate
+- (void)parser:(NSXMLParser *)aParser didStartElement:(NSString *)anElementName namespaceURI:(NSString *)aNamespaceURI qualifiedName:(NSString *)aQualifiedName attributes:(NSDictionary *)anAttributeDict
+{
+	if( foundRootElement == NDTriePListElelemtNone )
+	{
+		if( [anElementName isEqualToString:kArrayPListElementName] )
+			foundRootElement = NDTriePListElelemtArray;
+		else if( [anElementName isEqualToString:kArrayPListElementName] )
+			foundRootElement = NDTriePListElelemtArray;
+	}
+	else if( [anElementName isEqualToString:kStringPListElementName] )
+		currentString = [[NSMutableString alloc] init];
+	else
+		NSLog( @"Unexpected element %@", anElementName );
+}
+
+- (void)parser:(NSXMLParser *)aParser didEndElement:(NSString *)anElementName namespaceURI:(NSString *)aNamespaceURI qualifiedName:(NSString *)aQName
+{
+	if( foundRootElement != NDTriePListElelemtNone )
+	{
+		if( [anElementName isEqualToString:kArrayPListElementName] )
+			foundRootElement = NDTriePListElelemtNone;
+		else if( [anElementName isEqualToString:kStringPListElementName] )
+		{
+			count += setObjectForKey( root, currentString, [currentString description], keyComponentForString );
+			[currentString release];
+			currentString = nil;
+		}
+	}
+	else if( ![anElementName isEqualToString:kPListPListElementName] )
+		NSLog( @"Unexpected element %@", anElementName );
+}
+	
+- (void)parser:(NSXMLParser *)aParser foundCharacters:(NSString *)aString
+{
+	if( currentString != nil )
+		[currentString appendString:aString];
+}
+
+@end
+	
 static struct trieNode * _createNode( NSUInteger aKey, struct trieNode * aParent )
 {
 	struct trieNode		* theNode = malloc( sizeof(struct trieNode) );
