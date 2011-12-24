@@ -127,7 +127,7 @@ enum NDTriePListElelemt
 {
 	return [[[self alloc] initWithObjects:aStrings forKeys:aStrings count:aCount] autorelease];
 }
-+ (id)trieWithObjects:(id *)anObjects forKeys:(id *)aKeys count:(NSUInteger)aCount
++ (id)trieWithObjects:(id *)anObjects forKeys:(NSString **)aKeys count:(NSUInteger)aCount
 {
 	return [[[self alloc] initWithObjects:anObjects forKeys:aKeys count:aCount] autorelease];
 }
@@ -362,7 +362,7 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 	forEveryObjectFromNode( [self root], (BOOL(*)(NSString*,void*))aFunc, NULL );
 }
 
-- (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *))aFunc
+- (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(id))aFunc
 {
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
@@ -371,12 +371,12 @@ static BOOL _addToArrayFunc( id anObject, void * anArray )
 		forEveryObjectFromNode( theNode, (BOOL(*)(NSString*,void*))aFunc, NULL );
 }
 
-- (void)enumerateObjectsUsingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
+- (void)enumerateObjectsUsingFunction:(BOOL (*)(id,void *))aFunc context:(void*)aContext
 {
 	forEveryObjectFromNode( [self root], aFunc, aContext );
 }
 
-- (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(NSString *,void *))aFunc context:(void*)aContext
+- (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingFunction:(BOOL (*)(id,void *))aFunc context:(void*)aContext
 {
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
@@ -396,9 +396,9 @@ BOOL enumerateFunc( NSString * aString, void * aContext )
 	theBlock( aString, &theStop );
 	return !theStop;
 }
-- (void)enumerateObjectsUsingBlock:(void (^)(NSString *, BOOL *))aBlock { forEveryObjectFromNode( [self root], enumerateFunc, (void*)aBlock ); }
+- (void)enumerateObjectsUsingBlock:(void (^)(id, BOOL *))aBlock { forEveryObjectFromNode( [self root], enumerateFunc, (void*)aBlock ); }
 
-- (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingBlock:(void (^)(NSString * string, BOOL *stop))aBlock
+- (void)enumerateObjectsForKeysWithPrefix:(NSString*)aPrefix usingBlock:(void (^)(id string, BOOL *stop))aBlock
 {
 	struct trieNode		* theNode = [self root];
 	if( aPrefix != nil && [aPrefix length] > 0 )
@@ -537,7 +537,7 @@ BOOL testFunc( id anObject, void * aContext )
 		count += setObjectForKey( [self root], aStrings[i], aStrings[i], keyComponentForString );
 }
 
-- (void)setObjects:(id *)anObjects forKeys:(id *)aKeys count:(NSUInteger)aCount
+- (void)setObjects:(id *)anObjects forKeys:(NSString **)aKeys count:(NSUInteger)aCount
 {
 	for( NSUInteger i = 0; i < aCount; i++ )
 		count += setObjectForKey( [self root], anObjects[i], aKeys[i], keyComponentForString );

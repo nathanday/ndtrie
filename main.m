@@ -21,9 +21,9 @@ int main (int argc, const char * argv[])
 	for( NSString * theString in theTestFalseStrings )
 		NSCAssert( ![theTrie containsObjectForKey:theString], @"The Trie did contain %@", theString );
 
-	NSCAssert( [theTrie containsObjectForKeyWithPrefix:@"cat"], @"The Trie did NOT contain a string with prefix cat" );
+	NSCAssert( [theTrie containsObjectForKey:@"cat"], @"The Trie did NOT contain a string with prefix cat" );
 
-	NSCAssert( ![theTrie containsObjectForKeyWithPrefix:@"cats"], @"The Trie did contain a string with prefix cats" );
+	NSCAssert( ![theTrie containsObjectForKey:@"cats"], @"The Trie did contain a string with prefix cats" );
 	
 	theTempArray = [theTrie everyObject];
 
