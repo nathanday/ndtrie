@@ -49,12 +49,6 @@
 #else
 @interface NDTrie : NSObject <NSCopying,NSMutableCopying>
 #endif
-{
-@private
-	void		* root;
-@protected
-	NSUInteger	count;
-}
 
 /*!
 	@method trie
@@ -90,14 +84,14 @@
 	@discussion The new trie contains the strings contained within the list, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown. 
 	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
-+ (id)trieWithStrings:(NSString *)firstString, ...;
++ (id)trieWithStrings:(NSString *)firstString, ... NS_REQUIRES_NIL_TERMINATION;
 /*!
 	@method trieWithObjectsAndKeys:
 	@abstract Create a new trie from a list of objects and keys.
 	@discussion The new trie contains the objects and keys contained within the list, if a key within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown. 
 	@param firstObject A list of objects and keys
  */
-+ (id)trieWithObjectsAndKeys:(id)firstObject , ...;
++ (id)trieWithObjectsAndKeys:(id)firstObject , ... NS_REQUIRES_NIL_TERMINATION;
 /*!
 	@method trieWithContentsOfFile:
 	@abstract Create a new trie with the contents of a file.
@@ -156,14 +150,14 @@
 	@discussion The order of th strings is ignored, duplicates will be ignored.
 	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
-- (id)initWithStrings:(NSString *)firstString, ...;
+- (id)initWithStrings:(NSString *)firstString, ... NS_REQUIRES_NIL_TERMINATION;
 /*!
 	@method initWithObjectsAndKeys:
 	@abstract Initialise a trie with a list of objects and keys.
 	@discussion The object and key pairs are added to the reciever, if a key within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
 	@param firstObject A list of objects and key paris.
  */
-- (id)initWithObjectsAndKeys:(id)firstObject , ...;
+- (id)initWithObjectsAndKeys:(id)firstObject , ... NS_REQUIRES_NIL_TERMINATION;
 /*!
 	@method initWithContentsOfFile:
 	@abstract Initialise a trie with contents of a file.
@@ -188,11 +182,11 @@
 - (id)initWithStrings:(NSString **)strings count:(NSUInteger)count;
 /*!
 	@method initWithObjects:forKeys:count:
-	 @abstract Initialize a trie with the contents of of a c array.
-	 @discussion Initializes a trie that includes a given number of objects and keys from a given C arrays.
-	 @param objects a c array of objects
-	 @param keys a c array of <tt>NSString</tt>s
-	 @param count The number of objects and keys
+	@abstract Initialize a trie with the contents of of a c array.
+	@discussion Initializes a trie that includes a given number of objects and keys from a given C arrays.
+	@param objects a c array of objects
+	@param keys a c array of <tt>NSString</tt>s
+	@param count The number of objects and keys
  */
 - (id)initWithObjects:(id *)objects forKeys:(NSString **)keys count:(NSUInteger)count;
 /*!
@@ -413,14 +407,14 @@
 	@discussion The order of the strings is of no consequence, duplicate strings are alowed but duplicates are not stored within the trie.
 	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
-- (void)addStrings:(NSString *)firstString, ...;
+- (void)addStrings:(NSString *)firstString, ... NS_REQUIRES_NIL_TERMINATION;
 /*!
 	@method setObjectsAndKeys:
 	@abstract Add a set of key and objects to a trie.
 	@discussion <tt>setObjectsAndKeys:</tt> set through every key object pair and adds it to the reciever, if a key is not a <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
 	@param firstObject, The first object which must be followed by a key, the liist should be terminated by a <tt>nil</nil>, ifa key is <tt>nil</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
  */
-- (void)setObjectsAndKeys:(id)firstObject, ...;
+- (void)setObjectsAndKeys:(id)firstObject, ... NS_REQUIRES_NIL_TERMINATION;
 /*!
 	@method addStrings:count:
 	@abstract add a c array of strings to trie.
