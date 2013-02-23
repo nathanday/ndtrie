@@ -32,7 +32,6 @@
 
 #import <Foundation/Foundation.h>
 
-/* the macro __OBJC2__ test for the modern runtime not Objective-C 2 language features */
 #if TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
 #define NDFastEnumerationAvailable
 #endif
@@ -376,6 +375,15 @@
 
 #endif
 
+/*!
+	@method objectForKeyedSubscript:
+	@abstract Returns the value associated with a given key.
+	@discussion This method is the same as valueForKey: and is to support Dictionary-Style subscripting.
+	@param key The string key for which to return the corresponding value.
+	@result The value associated with aKey, or nil if no value is associated with aKey.
+ */
+- (id)objectForKeyedSubscript:(NSString *)key;
+
 @end
 
 /*!
@@ -473,5 +481,7 @@
 	@param prefix The prefix of all string removed from the recieve.
  */
 - (void)removeAllObjectsForKeysWithPrefix:(NSString *)prefix;
+
+- (void)setObject:(id)object forKeyedSubscript:(NSString *)aKey;
 
 @end

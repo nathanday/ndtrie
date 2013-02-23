@@ -199,8 +199,14 @@ int main (int argc, const char * argv[])
 		NSCAssert1( theDeleteArray.count == 4, @"contains %@ objects", theDeleteArray );
 		[theDeleteArray release];
 
-		NSLog( @"\n%@", theMutableTrie );
+		NDMutableTrie		* theSimpleTrie = [[NDMutableTrie alloc] init];
+		[theSimpleTrie setObject:@"Value One" forKey:@"One"];
+		theSimpleTrie[@"Two"] = @"Value Two";
+		NSCAssert( [[theSimpleTrie objectForKey:@"One"] isEqualTo:@"Value One"], @"does not contain value for 'One'" );
+		NSCAssert( [theSimpleTrie[@"Two"] isEqualTo:@"Value Two"], @"does not contain value for 'Two'" );
+		[theSimpleTrie release];
 
+		NSLog( @"\n%@", theMutableTrie );
 	}
 	return 0;
 }

@@ -483,12 +483,7 @@ BOOL testFunc( id anObject, void * aContext )
 	if( aState->state == 0 )
 	{
 		NSUInteger						theCount = [self count];
-#ifdef __OBJC_GC__
-#warning Fast enumataion has not been tested with garbage collxtion
-		struct getObjectsCountData		theData = {0, theCount, assign, (id*)NSAllocateCollectable( theCount*sizeof(id), NSScannedOption )};
-#else
 		struct getObjectsCountData		theData = {0, theCount, assign, (id*)malloc( theCount*sizeof(id) )};
-#endif
 		aState->itemsPtr = theData.objects;
 		forEveryObjectFromNode( [self root], getObjectsFunc, (void*)&theData );
 		theResultLength = theCount;
@@ -507,6 +502,14 @@ BOOL testFunc( id anObject, void * aContext )
 
 #pragma marrk - private methods
 - (struct trieNode*)root { return (struct trieNode*)_root; }
+
+#pragma mark - Dictionary-Style subscripting
+
+- (id)objectForKeyedSubscript:(id)aKey
+{
+	struct trieNode		* theNode = findNode( (struct trieNode *)_root, aKey, 0, NO, NULL, NULL, keyComponentForString );
+	return theNode != NULL ? theNode->object : nil;
+}
 
 @end
 
@@ -640,11 +643,17 @@ BOOL testFunc( id anObject, void * aContext )
 
 - (id)copyWithZone:(NSZone *)aZone { return [[NDTrie allocWithZone:aZone] initWithTrie:self]; }
 
+#pragma mark - Dictionary-Style subscripting
+
+- (void)setObject:(id)anObject forKeyedSubscript:(NSString *)aString
+{
+	if( ![aString isKindOfClass:[NSString class]] )
+		@throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"The key subscript must of of kind NSString" userInfo:nil];
+	_count += setObjectForKey( [self root], anObject, aString, keyComponentForString );
+}
+
 @end
 
-#ifdef __OBJC_GC__
-#warning NDTrieEnumerator has not been tested with garbage collection
-#endif
 @implementation NDTrieEnumerator
 
 + (id)trieEnumeratorWithTrie:(NDTrie *)trie node:(struct trieNode*)aNode { return [[[self alloc] initWithTrie:(NDTrie *)trie node:aNode] autorelease]; }
@@ -655,11 +664,7 @@ BOOL testFunc( id anObject, void * aContext )
 	{
 		struct getObjectsCountData		theData = {0, 0, retain, NULL};
 		_count = [aTrie count];
-#ifdef __OBJC_GC__
-		_everyObject = (id*)NSAllocateCollectable( _count*sizeof(id), NSScannedOption );
-#else
 		_everyObject = (id*)malloc( _count*sizeof(id) );
-#endif
 		_index = 0;
 		theData.count = _count;
 		theData.objects = _everyObject;
@@ -672,13 +677,7 @@ BOOL testFunc( id anObject, void * aContext )
 - (void)dealloc
 {
 	for( NSUInteger i = 0; i < _count; i++ )
-	{
-#ifdef __OBJC_GC__
-		CFRelease(_everyObject[i]);
-#else
 		[_everyObject[i] release];
-#endif
-	}
 	free( _everyObject );
 	[super dealloc];
 }
@@ -842,6 +841,9 @@ inline static NSUInteger _indexForChild( struct trieNode * aNode, NSUInteger aKe
  */
 static struct trieNode * findNode( struct trieNode * aNode, id aKey, NSUInteger anIndex, BOOL aCreate, struct trieNode ** aParent, NSUInteger * anPosition, NSUInteger (*aKeyComponentFunc)( id, NSUInteger, BOOL * ) )
 {
+	if( aKey == nil )
+		@throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"objectForKey: key cannot be nil" userInfo:nil];
+
 	struct trieNode		* theNode = NULL;
 	BOOL				theEnd = NO;
 	NSUInteger			theKeyComponent = aKeyComponentFunc( aKey, anIndex, &theEnd );
@@ -958,11 +960,7 @@ NSUInteger removeChild( struct trieNode * aRoot, id aPrefix, NSUInteger (*aKeyCo
 	if( theNode != NULL && theParent != NULL )
 	{
 		theRemoveCount = removeAllChildren( theNode );
-#ifndef __OBJC_GC__
 		[theNode->object release];
-#else
-		CFRelease(theNode->object);
-#endif
 		free( theNode );
 		memmove( &theParent->children[thePosition], &theParent->children[thePosition+1], (theParent->count-thePosition)*sizeof(struct trieNode*) );
 		theParent->count--;
@@ -972,18 +970,18 @@ NSUInteger removeChild( struct trieNode * aRoot, id aPrefix, NSUInteger (*aKeyCo
 
 BOOL setObjectForKey( struct trieNode * aNode, id anObject, id aKey, NSUInteger (*aKeyComponentFunc)( id, NSUInteger, BOOL * ) )
 {
+	if( aKey == nil )
+		@throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"setObjectForKey: key cannot be nil" userInfo:nil];
+	if( anObject == nil )
+		@throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"setObjectForKey: object cannot be nil" userInfo:[NSDictionary dictionaryWithObject:aKey forKey:@"key"]];
+
 	BOOL				theNewString = NO;
 	struct trieNode		* theNode = findNode( aNode, aKey, 0, YES, NULL, NULL, aKeyComponentFunc );
 	NSCParameterAssert( theNode != NULL );
 
 	theNewString = theNode->object == nil;
-#ifdef __OBJC_GC__
-	CFRelease(theNode->object);
-	theNode->object = CFRetain(anObject);
-#else
 	[theNode->object release];
 	theNode->object = [anObject retain];
-#endif
 	return theNewString;
 }
 
@@ -1026,11 +1024,7 @@ BOOL nodesAreEqual( struct trieNode * aNodeA, struct trieNode * aNodeB )
 static struct trieNode * copyNode( struct trieNode * aNode )
 {
 	struct trieNode		* theNode = _createNode(aNode->key, aNode );
-#ifdef __OBJC_GC__
-	theNode->object = CFRetain(aNode->object);
-#else
 	theNode->object = [aNode->object retain];
-#endif
 	theNode->count = theNode->size = aNode->count;
 	theNode->children = (struct trieNode**)malloc( theNode->size * sizeof(struct trieNode*) );
 	for( NSUInteger i = 0; i < theNode->count; i++ )
@@ -1050,11 +1044,7 @@ static BOOL getObjectsFunc( id anObject, void * aContext )
 		theContent->objects[theContent->index] = anObject;
 		break;
 	case retain:
-#ifdef __OBJC_GC__
-		theContent->objects[theContent->index] = CFRetain(anObject);
-#else
 		theContent->objects[theContent->index] = [anObject retain];
-#endif
 		break;
 	case copy:
 		theContent->objects[theContent->index] = [anObject copy];
