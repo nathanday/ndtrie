@@ -9,6 +9,10 @@
 #import "NDTrie.h"
 #include <string.h>
 
+#if __has_feature(objc_arc)
+#error This file cannot be compiled with ARC enabled, you can use it in a ARC project by turning of ARC for this file, google 'disable ARC for a single file in Xcode' <https://www.google.com.au/search?client=safari&rls=en&q=disable+ARC+for+a+single+file+in+Xcode>
+#endif
+
 static NSString		* const kPListPListElementName = @"plist",
 					* const kArrayPListElementName = @"array",
 					* const kStringPListElementName = @"string";
