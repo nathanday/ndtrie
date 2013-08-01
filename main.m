@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "NDTrie.h"
 
-NSString		* kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/NDTrieTest/sample_file_xml.plist";
+NSString		* kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/ndtrie/sample_file_xml.plist";
 
 int main (int argc, const char * argv[])
 {
@@ -204,6 +204,18 @@ int main (int argc, const char * argv[])
 		theSimpleTrie[@"Two"] = @"Value Two";
 		NSCAssert( [[theSimpleTrie objectForKey:@"One"] isEqualTo:@"Value One"], @"does not contain value for 'One'" );
 		NSCAssert( [theSimpleTrie[@"Two"] isEqualTo:@"Value Two"], @"does not contain value for 'Two'" );
+		[theSimpleTrie release];
+
+		theTrie = [[NDMutableTrie alloc] initWithCaseInsensitive:YES array:theTestTrueStrings];
+		NSCAssert( [theTrie containsObjectForKey:@"CaterpiLLar"], @"The Trie did NOT contain CaterpiLLar" );
+		NSCAssert( [theTrie containsObjectForKey:@"doG"], @"The Trie did NOT contain doG" );
+		NSCAssert( [theTrie containsObjectForKey:@"Cat"], @"The Trie did NOT contain Cat" );
+		[theSimpleTrie release];
+
+		theTrie = [[NDMutableTrie alloc] initWithCaseInsensitive:NO array:theTestTrueStrings];
+		NSCAssert( ![theTrie containsObjectForKey:@"CaterpiLLar"], @"The Trie did NOT contain CaterpiLLar" );
+		NSCAssert( ![theTrie containsObjectForKey:@"doG"], @"The Trie did NOT contain doG" );
+		NSCAssert( ![theTrie containsObjectForKey:@"Cat"], @"The Trie did NOT contain Cat" );
 		[theSimpleTrie release];
 
 		NSLog( @"\n%@", theMutableTrie );

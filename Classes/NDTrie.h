@@ -206,11 +206,103 @@
 - (id)initWithObjectsAndKeys:(id)firstObject arguments:(va_list)arguments;
 
 /*!
+	@method initWithCaseInsensitive:
+	@abstract Initialise a trie.
+	@discussion The trie will be created empty.
+	@param caseInsensitive Determines if key are handled in a case insensitive way or not.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive;
+/*!
+	@method initWithWithCaseInsensitive:array:
+	@abstract Initialise a trie with the contents of an <tt>NSArray</tt>.
+	@discussion The trie will contain the strings contained within <tt><i>array</i></tt>, duplicates strings are allowed but only one will be added.
+	@param array An array of strings, if an object within the array is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive array:(NSArray *)array;
+/*!
+	@method initWithCaseInsensitive:dictionary:
+	@abstract Initialise a trie with the contents of an <tt>NSDictionary</tt>.
+	@discussion The trie will contain the objects and keys contained within <tt><i>dictionary</i></tt>.
+	@param dictionary An dictionary of objects and keys, if a key within the dictionary is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive dictionary:(NSDictionary *)dictionary;
+/*!
+	@method initWithCaseInsensitive:trie:
+	@abstract Initialise a trie with the contents of another <tt>NDTrie</tt>.
+	@discussion The trie will contain the strings contained within <tt><i>anotherTrie</i></tt>.
+	@param array An array of strings.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive trie:(NDTrie *)anotherTrie;
+/*!
+	@method initWithCaseInsensitive:strings:
+	@abstract Initialise a trie with a list of <tt>NSString</tt>s
+	@discussion The order of th strings is ignored, duplicates will be ignored.
+	@param firstString The first string of a list of nil terminated strings, if an object within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive strings:(NSString *)firstString, ... NS_REQUIRES_NIL_TERMINATION;
+/*!
+	@method initWithCaseInsensitive:objectsAndKeys:
+	@abstract Initialise a trie with a list of objects and keys.
+	@discussion The object and key pairs are added to the reciever, if a key within the list is not an <tt>NSString</tt> then the exception <tt>NSInvalidArgumentException</tt> is thrown.
+	@param firstObject A list of objects and key paris.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive objectsAndKeys:(id)firstObject , ... NS_REQUIRES_NIL_TERMINATION;
+/*!
+	@method initWithCaseInsensitive:contentsOfFile:
+	@abstract Initialise a trie with contents of a file.
+	@discussion Attempts to create an NSArray with the contents of the file and then passes the array to <tt>-[NDTrie initWithCaseInsensitive:array:]</tt>.
+	@param path A path to a property list file generated from a <tt>NDTrie</tt> or <tt>NSArray</tt>
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive contentsOfFile:(NSString *)path;
+/*!
+	@method initWithCaseInsensitive:(BOOL)caseInsensitive contentsOfURL:
+	@abstract Initialise a trie witgh contents of a file.
+	@discussion Attempts to create an NSArray with the contents of the file and then passes the array to <tt>-[NDTrie initWithCaseInsensitive:array:]</tt>.
+	@param url A file url to a property list file generated from a <tt>NDTrie</tt> or <tt>NSArray</tt>
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive contentsOfURL:(NSURL *)url;
+/*!
+	@method initWithCaseInsensitive:(BOOL)caseInsensitive strings:count:
+	@abstract Initialise a trie with a c array.
+	@discussion The order of th strings is ignored, duplicates will be ignored.
+	@param strings A c array of <tt>NSString</tt>
+	@param count The number of strings within the c array.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive strings:(NSString **)strings count:(NSUInteger)count;
+/*!
+	@method initWithCaseInsensitive:(BOOL)caseInsensitive objects:forKeys:count:
+	@abstract Initialize a trie with the contents of of a c array.
+	@discussion Initializes a trie that includes a given number of objects and keys from a given C arrays.
+	@param objects a c array of objects
+	@param keys a c array of <tt>NSString</tt>s
+	@param count The number of objects and keys
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive objects:(id *)objects forKeys:(NSString **)keys count:(NSUInteger)count;
+/*!
+	@method initWithCaseInsensitive:(BOOL)caseInsensitive strings:arguments:
+	@abstract Initialise a trie with a <tt>va_list</tt> of <tt>NSString</tt>s
+	@discussion This method is used by the varable number of string argument methods, The order of th strings is ignored, duplicates will be ignored.
+	@param firstString The first string.
+	@param arguments A va_list for the rest of the strings, the list needs to be nil terminated.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive strings:(NSString *)firstString arguments:(va_list)arguments;
+/*!
+	@method initWithCaseInsensitive:(BOOL)caseInsensitive objectsAndKeys:arguments:
+	@abstract Initialise a trie with a <tt>va_list</tt> of objects and keys
+	@discussion This method is used by the varable number of object and keys arguments methods, The order of th strings is ignored, duplicates will be ignored.
+	@param firstObject first object in a list of object and keys.
+	@param arguments A va_list for the rest of the objects and keys, the list needs to be nil terminated.
+ */
+- (id)initWithCaseInsensitive:(BOOL)caseInsensitive objectsAndKeys:(id)firstObject arguments:(va_list)arguments;
+
+/*!
 	@method count
 	@abstract get the number of strings with a trie.
 	@discussion Returns the number of objects contained within th receiver.
  */
 - (NSUInteger)count;
+
+- (BOOL)isCaseInsensitive;
 
 /*!
 	@method containsObjectForKey:
