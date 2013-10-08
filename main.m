@@ -1,11 +1,13 @@
 #import <Foundation/Foundation.h>
 #import "NDTrie.h"
 
-NSString		* kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/ndtrie/sample_file_xml.plist";
+static NSString		* const kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/ndtrie/sample_file_xml.plist";
+static NSString		* const kUNIXWordsFilePath = @"/usr/share/dict/words";
 
 static void testSetOne();
 static void testRemoveKeyHasNoChildren(BOOL aSolo);
 static void testRemoveKeyHasChildren(BOOL aSolo);
+static void testEveryWord();
 
 int main (int argc, const char * argv[])
 {
@@ -13,9 +15,11 @@ int main (int argc, const char * argv[])
 	{
 		testSetOne();
 		testRemoveKeyHasNoChildren(YES);
-//		testRemoveKeyHasNoChildren(NO);
+		testRemoveKeyHasNoChildren(NO);
 		testRemoveKeyHasChildren(YES);
 		testRemoveKeyHasChildren(NO);
+		printf( "Big test\n" );
+		testEveryWord();
 	}
 	return 0;
 }
@@ -225,13 +229,13 @@ void testSetOne()
 	NSCAssert( [theTrie containsObjectForKey:@"CaterpiLLar"], @"The Trie did NOT contain CaterpiLLar" );
 	NSCAssert( [theTrie containsObjectForKey:@"doG"], @"The Trie did NOT contain doG" );
 	NSCAssert( [theTrie containsObjectForKey:@"Cat"], @"The Trie did NOT contain Cat" );
-	[theSimpleTrie release];
+	[theTrie release];
 
 	theTrie = [[NDMutableTrie alloc] initWithCaseInsensitive:NO array:theTestTrueStrings];
 	NSCAssert( ![theTrie containsObjectForKey:@"CaterpiLLar"], @"The Trie did NOT contain CaterpiLLar" );
 	NSCAssert( ![theTrie containsObjectForKey:@"doG"], @"The Trie did NOT contain doG" );
 	NSCAssert( ![theTrie containsObjectForKey:@"Cat"], @"The Trie did NOT contain Cat" );
-	[theSimpleTrie release];
+	[theTrie release];
 
 	NSLog( @"\n%@", theMutableTrie );
 }
@@ -299,4 +303,104 @@ void testRemoveKeyHasChildren( BOOL aSolo )
 	NSLog(@"testRemoveKeyHasChildren: %@", trie);
 	// testRemoveKeyHasChildren: { 12, 123, 1234 }
 	// where it should be { 12, 1234 }
+}
+
+void testEveryWord()
+{
+	NSError					* theError = nil;
+	NSString				* theString = [NSString stringWithContentsOfFile:kUNIXWordsFilePath encoding:NSUTF8StringEncoding error:&theError];
+	NSCAssert( theString != nil, @"Failed to load '%@', error: %@", kUNIXWordsFilePath, theError );
+	NSArray					* theOriginalEveryWord = [theString componentsSeparatedByString:@"\n"];
+	if( [[theOriginalEveryWord lastObject] length] == 0 )
+		theOriginalEveryWord = [theOriginalEveryWord subarrayWithRange:NSMakeRange(0, (theOriginalEveryWord.count-1)>>4)];
+	NSMutableArray			* theEveryPresentWord = nil;
+	NDMutableTrie			* theTrie = [NDMutableTrie trie];
+
+	/*
+		build
+	 */
+	theEveryPresentWord = [theOriginalEveryWord mutableCopy];
+	while( theEveryPresentWord.count > 0 )
+	{
+		NSUInteger		theIndex = random()%theEveryPresentWord.count;
+		NSString		* theWord = [theEveryPresentWord objectAtIndex:theIndex],
+						* theFoundWord = nil;
+		NSCParameterAssert( theWord.length > 0 );
+		[theTrie addString:theWord];
+		[theEveryPresentWord removeObjectAtIndex:theIndex];
+		theFoundWord = [theTrie objectForKey:theWord];
+		NSCAssert( [theFoundWord isEqualToString:theWord], @"Failed to get word %@, got %@", theWord, theFoundWord );
+	}
+	[theEveryPresentWord release];
+
+	/*
+	 test
+	 */
+	theEveryPresentWord = [theOriginalEveryWord mutableCopy];
+	while( theEveryPresentWord.count > 0 )
+	{
+		NSUInteger		theIndex = random()%theEveryPresentWord.count;
+		NSString		* theWord = [theEveryPresentWord objectAtIndex:theIndex],
+					* theFoundWord = nil;
+		NSCParameterAssert( theWord.length > 0 );
+		[theEveryPresentWord removeObjectAtIndex:theIndex];
+		theFoundWord = [theTrie objectForKey:theWord];
+		NSCAssert( [theFoundWord isEqualToString:theWord], @"Failed to get word %@, got %@", theWord, theFoundWord );
+	}
+	[theEveryPresentWord release];
+
+	/*
+	 test two
+	 */
+	for( NSString * theWord in theOriginalEveryWord )
+	{
+		for( NSString * theTestWord in [theTrie everyObjectForKeyWithPrefix:theWord] )
+			NSCAssert( [theTestWord hasPrefix:theWord], @"The word %@ doesn't begin with %@", theTestWord, theWord );
+	}
+	/*
+	 remove
+	 */
+	theEveryPresentWord = [theOriginalEveryWord mutableCopy];
+	NSMutableSet		* theEveryRemovedWord = [[NSMutableSet alloc] init];
+	while( theEveryPresentWord.count > 0 )
+	{
+		NSUInteger		theIndex = random()%theEveryPresentWord.count;
+		NSString		* theWord = [theEveryPresentWord objectAtIndex:theIndex],
+						* theFoundWord = nil;
+
+		NSCParameterAssert( theWord.length > 0 );
+		NSCParameterAssert( [theWord isEqualToString:[theEveryPresentWord objectAtIndex:theIndex]] );
+		NSCAssert( ![theEveryRemovedWord containsObject:theWord], @"Already removed %@", theWord );
+		[theEveryRemovedWord addObject:theWord];
+		NSCParameterAssert( [[theEveryPresentWord objectAtIndex:theIndex] isEqualToString:theWord] );
+		[theEveryPresentWord removeObjectAtIndex:theIndex];
+		NSCParameterAssert( [theEveryPresentWord indexOfObject:theWord] == NSNotFound );
+		theFoundWord = [theTrie objectForKey:theWord];
+		NSCAssert( [theFoundWord isEqualToString:theWord], @"Failed to get word %@, got %@", theWord, theFoundWord );
+		[theTrie removeObjectForKey:theWord];
+		theFoundWord = [theTrie objectForKey:theWord];
+		NSCAssert( theFoundWord == nil, @"Failed to remove word %@, got %@", theWord, theFoundWord );
+
+		/*
+		 Check removed words are still removed
+		 */
+		for( NSString * theRemainingWord in theEveryPresentWord )
+		{
+			NSCAssert( ![theEveryRemovedWord containsObject:theRemainingWord], @"The word %@ is still there", theRemainingWord );
+			theFoundWord = [theTrie objectForKey:theRemainingWord];
+			NSCAssert( theFoundWord != nil, @"The word %@ came back, got %@, index=%lu at=%lu", theWord, theRemainingWord, [theEveryPresentWord indexOfObject:theRemainingWord], theIndex );
+		}
+
+		/*
+		 Check remaining words are still remaining
+		 */
+		for( NSString * theRemovedWord in theEveryRemovedWord )
+		{
+			theFoundWord = [theTrie objectForKey:theRemovedWord];
+			NSCAssert( theFoundWord == nil, @"The word %@ came back, got %@", theWord, theFoundWord );
+		}
+		NSCAssert( theEveryPresentWord.count == theTrie.count, @"Counts dont match %lu != %lu, word was: %@", theEveryPresentWord.count, theTrie.count, theWord);
+	}
+	[theEveryPresentWord release];
+	[theEveryRemovedWord release];
 }

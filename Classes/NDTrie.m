@@ -23,8 +23,8 @@ struct trieNode
 	NSUInteger			count,
 						size;
 	id					object;
-	struct trieNode		** children;
 	struct trieNode		* parent;
+	struct trieNode		** children;
 };
 
 struct getObjectsCountData
@@ -584,7 +584,7 @@ BOOL testFunc( id anObject, void * aContext )
 
 - (void)addString:(NSString *)aString { [self setObject:aString forKey:aString]; }
 
-- (void)setObject:(id)anObject forKey:(NSString *)aString;
+- (void)setObject:(id)anObject forKey:(NSString *)aString
 {
 	_count += setObjectForKey( self.rootNode, anObject, aString, self.isCaseInsensitive ? keyComponentCaseInsensitiveForString : keyComponentForString );
 }
@@ -1020,7 +1020,7 @@ BOOL removeObjectForKey( struct trieNode * aNode, id aKey, NSUInteger anIndex, B
 				}
 				else if( removeObjectForKey( aNode->children[theIndex], aKey, anIndex+1, aFoundNode, aKeyComponentFunc ) )
 				{
-					if( aNode->object == nil )
+					if( aNode->children[theIndex]->object == nil )			// aNode->children[theIndex]
 					{
 						aNode->count--;
 						if( aNode->count > 0 )
