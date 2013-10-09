@@ -312,7 +312,7 @@ void testEveryWord()
 	NSCAssert( theString != nil, @"Failed to load '%@', error: %@", kUNIXWordsFilePath, theError );
 	NSArray					* theOriginalEveryWord = [theString componentsSeparatedByString:@"\n"];
 	if( [[theOriginalEveryWord lastObject] length] == 0 )
-		theOriginalEveryWord = [theOriginalEveryWord subarrayWithRange:NSMakeRange(0, (theOriginalEveryWord.count-1)>>4)];
+		theOriginalEveryWord = [theOriginalEveryWord subarrayWithRange:NSMakeRange(0, (theOriginalEveryWord.count-1)>>6)];
 	NSMutableArray			* theEveryPresentWord = nil;
 	NDMutableTrie			* theTrie = [NDMutableTrie trie];
 
