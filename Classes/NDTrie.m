@@ -810,8 +810,6 @@ BOOL testFunc( id anObject, void * aContext )
 	{
 		if( [anElementName isEqualToString:kArrayPListElementName] )
 			_foundRootElement = NDTriePListElelemtArray;
-		else if( [anElementName isEqualToString:kArrayPListElementName] )
-			_foundRootElement = NDTriePListElelemtArray;
 	}
 	else if( [anElementName isEqualToString:kStringPListElementName] )
 		_currentString = [[NSMutableString alloc] init];
