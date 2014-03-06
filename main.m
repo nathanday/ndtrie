@@ -84,7 +84,10 @@ void testSetOne()
 	NSCAssert( theLargeTrie.count == 182, @"large trie contains %lu items", theLargeTrie.count );
 	for( NSString * theString in [NSArray arrayWithContentsOfFile:kSampleFile] )
 		NSCAssert( [theLargeTrie containsObjectForKey:theString], @"trie did NOT contain %@", theString );
-
+    
+    NDTrie      * theLargeTrieCaseInsensitive = [[NDTrie alloc] initWithCaseInsensitive:YES contentsOfFile:kSampleFile];
+    NSCAssert(theLargeTrieCaseInsensitive.count == 171, @"large case insensitive trie contains %lu items", theLargeTrieCaseInsensitive.count);
+    
 	NDTrie		* theCopy = [theTrie copy];
 	NSCParameterAssert( theCopy != nil );
 	NSCAssert( ![theCopy isKindOfClass:[NDMutableTrie class]], @"trie is a class of %@", [theCopy class] );
