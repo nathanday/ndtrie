@@ -4,7 +4,7 @@
 static NSString		* const kSampleFile = @"/Users/nathan/Developer/Projects/Libraries/ndtrie/sample_file_xml.plist";
 static NSString		* const kUNIXWordsFilePath = @"/usr/share/dict/words";
 
-static void testSetOne();
+static void testSetOneCaseInsensitive(BOOL caseInsensitive);
 static void testRemoveKeyHasNoChildren(BOOL aSolo);
 static void testRemoveKeyHasChildren(BOOL aSolo);
 static void testEveryWord();
@@ -13,7 +13,8 @@ int main (int argc, const char * argv[])
 {
 	@autoreleasepool
 	{
-		testSetOne();
+        testSetOneCaseInsensitive(NO);
+        testSetOneCaseInsensitive(YES);
 		testRemoveKeyHasNoChildren(YES);
 		testRemoveKeyHasNoChildren(NO);
 		testRemoveKeyHasChildren(YES);
@@ -24,13 +25,13 @@ int main (int argc, const char * argv[])
 	return 0;
 }
 
-void testSetOne()
+void testSetOneCaseInsensitive(BOOL caseInsensitive)
 {
 	NSArray				* theTestTrueStrings = @[@"caterpillar", @"dog", @"catalog", @"creak", @"cat", @"caterpillar", @"camera", @"camcorder"],
 						* theTestFalseStrings = @[@"caterpillars", @"do", @"catalogue", @"creek", @"fat", @"bug", @"photo", @"VCR"];
 	NSArray				* theTempArray = nil;
 
-	NDTrie				* theTrie = [NDTrie trieWithArray:theTestTrueStrings];
+    NDTrie* theTrie = [[NDTrie alloc] initWithCaseInsensitive:caseInsensitive array:theTestTrueStrings];
 	NSLog( @"\n%@", theTrie );
 
 	NSCAssert( theTrie.count == 7, @"The Trie had %lu strings", theTrie.count );
