@@ -10,6 +10,7 @@
 		8DD76F9A0486AA7600D96B5E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		D88B7A8910619CD500B91A81 /* NDTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = D88B7A8810619CD500B91A81 /* NDTrie.m */; };
+		D8E1BFD31BDCDD3A007A396E /* LICENSE.txt in Sources */ = {isa = PBXBuildFile; fileRef = D8E1BFD21BDCDD3A007A396E /* LICENSE.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,7 @@
 		8DD76FA10486AA7600D96B5E /* NDTrieTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NDTrieTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88B7A8710619CD500B91A81 /* NDTrie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDTrie.h; sourceTree = "<group>"; };
 		D88B7A8810619CD500B91A81 /* NDTrie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NDTrie.m; sourceTree = "<group>"; };
+		D8E1BFD21BDCDD3A007A396E /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 			children = (
 				32A70AAB03705E1F00C91783 /* NDTrieTest_Prefix.pch */,
 				08FB7796FE84155DC02AAC07 /* main.m */,
+				D8E1BFD21BDCDD3A007A396E /* LICENSE.txt */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9A0486AA7600D96B5E /* main.m in Sources */,
+				D8E1BFD31BDCDD3A007A396E /* LICENSE.txt in Sources */,
 				D88B7A8910619CD500B91A81 /* NDTrie.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
