@@ -66,16 +66,16 @@ static BOOL getObjectsFunc( id, void * );
 
 static NSUInteger keyComponentCaseInsensitiveForString( id anObject, NSUInteger anIndex, BOOL * anEnd )
 {
-	if( anIndex < [anObject length] )
-	{
-		NSUInteger	theResult = [anObject characterAtIndex:anIndex];
-		if( theResult >= 'a' && theResult <= 'z' )
-			theResult = theResult + 'A' - 'a';
-		return theResult;
-	}
-
-	*anEnd = YES;
-	return 0;
+    NSUInteger		theResult = 0,
+    theLength = [anObject length];
+    if( anIndex < theLength ) {
+        theResult = [anObject characterAtIndex:anIndex];
+        if( theResult >= 'a' && theResult <= 'z' )
+            theResult = theResult + 'A' - 'a';
+    }
+    
+    *anEnd = (anIndex + 1) == theLength;
+    return theResult;
 }
 
 static NSUInteger keyComponentForString( id anObject, NSUInteger anIndex, BOOL * anEnd )
