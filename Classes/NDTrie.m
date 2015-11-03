@@ -292,7 +292,7 @@ enum NDTriePListElelemt
 - (id)initWithContentsOfFile:(NSString *)aPath { return [self initWithCaseInsensitive:NO contentsOfURL:[NSURL fileURLWithPath:aPath]]; }
 - (id)initWithContentsOfURL:(NSURL *)aURL { return [self initWithCaseInsensitive:NO contentsOfURL:aURL]; }
 
-- (id)initWithCaseInsensitive:(BOOL)aCaseInsensitive contentsOfFile:(NSString *)aPath { return [self initWithContentsOfURL:[NSURL fileURLWithPath:aPath]]; }
+- (id)initWithCaseInsensitive:(BOOL)aCaseInsensitive contentsOfFile:(NSString *)aPath { return [self initWithCaseInsensitive:aCaseInsensitive contentsOfURL:[NSURL fileURLWithPath:aPath]]; }
 - (id)initWithCaseInsensitive:(BOOL)aCaseInsensitive contentsOfURL:(NSURL *)aURL
 {
 	if( (self = [self initWithCaseInsensitive:aCaseInsensitive]) != nil )
@@ -304,7 +304,7 @@ enum NDTriePListElelemt
 		else
 		{
 			NSArray		* theArray = [[NSArray alloc] initWithContentsOfURL:aURL];
-			self = [self initWithArray:theArray];
+			self = [self initWithCaseInsensitive:aCaseInsensitive array:theArray];
 			[theArray release];
 		}
 		[theBuilder release];
@@ -826,8 +826,6 @@ BOOL testFunc( id anObject, void * aContext )
 	if( _foundRootElement == NDTriePListElelemtNone )
 	{
 		if( [anElementName isEqualToString:kArrayPListElementName] )
-			_foundRootElement = NDTriePListElelemtArray;
-		else if( [anElementName isEqualToString:kArrayPListElementName] )
 			_foundRootElement = NDTriePListElelemtArray;
 	}
 	else if( [anElementName isEqualToString:kStringPListElementName] )
